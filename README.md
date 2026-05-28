@@ -61,6 +61,26 @@ Infra:    Local dev scripts first, Docker/deployment after MVP is stable
 
 PostgreSQL, Redis, Celery, teams, public API, and in-app model training are deliberately deferred until the core workflow is useful.
 
+## Local Phase 0 Setup
+
+Backend:
+
+```bash
+cd backend
+pip install -r requirements.txt
+python -m pytest
+uvicorn app.main:app --reload
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm install
+npm run typecheck
+npm run dev
+```
+
 ## Demo Datasets
 
 | File | Domain | Key Task |
