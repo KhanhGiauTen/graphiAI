@@ -14,6 +14,7 @@ class ColumnProfile(BaseModel):
     unique_count: int
     cardinality_ratio: float = Field(ge=0, le=1)
     sample_values: list[Any]
+    value_counts: dict[str, int] | None = None
     min_val: Any | None = None
     max_val: Any | None = None
     mean_val: float | None = None

@@ -15,6 +15,7 @@ export interface ColumnProfile {
   unique_count: number
   cardinality_ratio: number
   sample_values: unknown[]
+  value_counts?: Record<string, number> | null
   min_val?: unknown
   max_val?: unknown
   mean_val?: number | null
@@ -108,4 +109,39 @@ export interface ApiResponse<T> {
   success: boolean
   data: T | null
   error: Record<string, unknown> | null
+}
+
+export type GraphSuitability =
+  | "recommended"
+  | "promising_but_review"
+  | "weak_graph_signal"
+  | "not_recommended"
+
+export type HealthStatus = "pass" | "warning" | "fail"
+
+export interface QualityComponentScores {
+  entity_confidence: number
+  relationship_confidence: number
+  feature_richness: number
+  task_suitability: number
+  connectivity_estimate: number
+  interpretability: number
+}
+
+export interface HealthCheck {
+  name: string
+  status: HealthStatus
+  message: string
+}
+
+export interface GraphQualityReport {
+  final_score: number
+  suitability: GraphSuitability
+  component_scores: QualityComponentScores
+  strengths: string[]
+  weaknesses: string[]
+  warnings: string[]
+  leakage_warnings: string[]
+  health_checks: HealthCheck[]
+  explanation: string
 }
