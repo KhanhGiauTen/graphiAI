@@ -3,8 +3,9 @@ import asyncio
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.schemas.ai_schema import AISchemaResponse
 from app.schemas.dataset import ColumnProfile, DatasetProfile
-from app.services.ai.engine import LLMEngine, LLMUnavailableError
+from app.services.ai.engine import LLMEngine, LLMUnavailableError, extract_json_object
 from app.services.ai.schema_understanding import AISchemaService, ColumnSemanticAnalyzer
 
 
@@ -82,6 +83,51 @@ def test_ai_schema_service_returns_three_ranked_valid_schemas() -> None:
             assert set(edge.source_columns).issubset(source_columns)
 
 
+def test_ai_schema_service_uses_valid_llm_response_and_caches_by_profile() -> None:
+    class FakeEngine:
+        model = "fake-valid"
+
+        def __init__(self) -> None:
+            self.calls = 0
+
+        async def complete_with_schema(self, system: str, user: str, pydantic_model: type[AISchemaResponse]) -> AISchemaResponse:
+            self.calls += 1
+            response = AISchemaService().analyze(fraud_profile())
+            response.mode = "llm_draft"
+            response.semantics.dataset_summary = "LLM enriched fraud transaction graph."
+            return response
+
+    AISchemaService._cache.clear()
+    engine = FakeEngine()
+    service = AISchemaService(llm_engine=engine, mode="llm")  # type: ignore[arg-type]
+
+    first = asyncio.run(service.analyze_async(fraud_profile()))
+    second = asyncio.run(service.analyze_async(fraud_profile()))
+
+    assert first.mode == "llm"
+    assert first.semantics.dataset_summary == "LLM enriched fraud transaction graph."
+    assert second.mode == "llm"
+    assert engine.calls == 1
+
+
+def test_ai_schema_service_falls_back_when_llm_references_unknown_columns() -> None:
+    class InvalidEngine:
+        model = "fake-invalid"
+
+        async def complete_with_schema(self, system: str, user: str, pydantic_model: type[AISchemaResponse]) -> AISchemaResponse:
+            response = AISchemaService().analyze(fraud_profile())
+            response.schemas[0].node_types[0].source_column = "ghost_id"
+            return response
+
+    AISchemaService._cache.clear()
+    service = AISchemaService(llm_engine=InvalidEngine(), mode="llm")  # type: ignore[arg-type]
+    response = asyncio.run(service.analyze_async(fraud_profile()))
+
+    assert response.mode == "heuristic_fallback"
+    assert any("unknown node column" in warning for warning in response.warnings)
+    assert all(node.source_column != "ghost_id" for schema in response.schemas for node in schema.node_types)
+
+
 def test_event_centered_schema_is_available_for_fraud_data() -> None:
     response = AISchemaService().analyze(fraud_profile())
     schema_by_id = {schema.id: schema for schema in response.schemas}
@@ -140,3 +186,7 @@ def test_llm_engine_reports_unavailable_without_provider() -> None:
         assert "No external LLM provider" in str(exc)
     else:
         raise AssertionError("LLMEngine should fail closed when no provider is configured.")
+
+
+def test_extract_json_object_accepts_markdown_wrapped_json() -> None:
+    assert extract_json_object("""```json\n{"ok": true}\n```""") == '{"ok": true}'

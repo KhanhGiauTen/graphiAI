@@ -13,8 +13,8 @@ router = APIRouter(prefix="/ai/schema", tags=["ai-schema"])
 
 
 @router.post("/analyze", response_model=AISchemaResponse)
-def analyze_schema(request: AISchemaRequest) -> AISchemaResponse:
-    return AISchemaService().analyze(request.profile)
+async def analyze_schema(request: AISchemaRequest) -> AISchemaResponse:
+    return await AISchemaService().analyze_async(request.profile)
 
 
 @router.post("/explain", response_model=SchemaExplanationResponse)

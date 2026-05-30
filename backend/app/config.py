@@ -27,7 +27,10 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]
     AI_SCHEMA_MODE: str = "heuristic"
     LLM_MODEL: str = "local-heuristic"
+    OPENAI_BASE_URL: str = "https://api.openai.com/v1"
     OPENAI_API_KEY: str | None = None
+    LLM_TIMEOUT_SECONDS: float = 20.0
+    LLM_MAX_RETRIES: int = 2
     SECRET_KEY: str = "change-this-in-production"
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 604800
 

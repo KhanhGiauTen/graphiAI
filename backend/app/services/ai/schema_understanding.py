@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import asyncio
+import hashlib
+import json
 from itertools import combinations
 
+from app.config import settings
 from app.schemas.ai_schema import (
     AISchemaResponse,
     ColumnSemantic,
@@ -10,6 +14,7 @@ from app.schemas.ai_schema import (
 )
 from app.schemas.dataset import ColumnProfile, DatasetProfile
 from app.schemas.graph import EdgeType, GraphSchema, NodeType
+from app.services.ai.engine import LLMEngine, LLMUnavailableError
 from app.services.graph_quality import GraphQualityScorer
 
 
@@ -417,11 +422,41 @@ class SchemaExplainer:
 
 
 class AISchemaService:
-    def __init__(self) -> None:
+    _cache: dict[str, AISchemaResponse] = {}
+
+    def __init__(self, llm_engine: LLMEngine | None = None, mode: str | None = None) -> None:
+        self.llm_engine = llm_engine or LLMEngine()
+        self.mode = (mode or settings.AI_SCHEMA_MODE).lower()
         self.semantic_analyzer = ColumnSemanticAnalyzer()
         self.schema_recommender = AISchemaRecommender()
 
     def analyze(self, profile: DatasetProfile) -> AISchemaResponse:
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            return asyncio.run(self.analyze_async(profile))
+        return self._heuristic_response(profile)
+
+    async def analyze_async(self, profile: DatasetProfile) -> AISchemaResponse:
+        fallback = self._heuristic_response(profile)
+        if self.mode not in {"llm", "ai", "hybrid"}:
+            return fallback
+
+        cache_key = self._cache_key(profile)
+        if cache_key in self._cache:
+            return self._cache[cache_key].model_copy(deep=True)
+
+        try:
+            response = await self._llm_response(profile, fallback)
+            validated = self._validate_llm_response(profile, response)
+            validated.mode = "llm"
+            self._cache[cache_key] = validated.model_copy(deep=True)
+            return validated
+        except (LLMUnavailableError, ValueError) as exc:
+            fallback.warnings = _dedupe([*fallback.warnings, f"LLM schema analysis unavailable: {exc}"])
+            return fallback
+
+    def _heuristic_response(self, profile: DatasetProfile) -> AISchemaResponse:
         semantics = self.semantic_analyzer.analyze(profile)
         schemas = self.schema_recommender.recommend(profile, semantics)
         warnings = self._service_warnings(profile, schemas)
@@ -431,6 +466,62 @@ class AISchemaService:
             schemas=schemas,
             warnings=warnings,
         )
+
+    async def _llm_response(
+        self,
+        profile: DatasetProfile,
+        fallback: AISchemaResponse,
+    ) -> AISchemaResponse:
+        return await self.llm_engine.complete_with_schema(
+            system=(
+                "You are Graphify AI, an expert graph machine learning engineer. "
+                "Infer graph-ready semantic meaning from tabular dataset profiles. "
+                "Prefer useful, explainable graph schemas for fraud, recommendation, "
+                "student analytics, transaction networks, or knowledge graph use cases."
+            ),
+            user=json.dumps(
+                {
+                    "dataset_profile": profile.model_dump(),
+                    "rule_based_fallback": fallback.model_dump(),
+                    "requirements": [
+                        "Return exactly 3 ranked graph schemas when at least 2 entity columns exist.",
+                        "Use only column names that exist in dataset_profile.columns.",
+                        "Explain nodes, edges, features, labels, strengths, weaknesses, and warnings.",
+                        "Set recommended_models to practical baselines such as Node2Vec, GraphSAGE, GAT, or Logistic Regression.",
+                    ],
+                },
+                ensure_ascii=True,
+            ),
+            pydantic_model=AISchemaResponse,
+        )
+
+    def _validate_llm_response(self, profile: DatasetProfile, response: AISchemaResponse) -> AISchemaResponse:
+        valid_columns = {column.name for column in profile.columns}
+        if len(response.semantics.columns) != len(profile.columns):
+            raise ValueError("LLM response did not provide one semantic entry per dataset column.")
+        for semantic in response.semantics.columns:
+            if semantic.column_name not in valid_columns:
+                raise ValueError(f"LLM semantic output referenced unknown column `{semantic.column_name}`.")
+
+        if len(response.schemas) != 3 and len(profile.id_columns) >= 2:
+            raise ValueError("LLM response did not return exactly 3 schema candidates.")
+        for schema in response.schemas:
+            for node in schema.node_types:
+                if node.source_column not in valid_columns:
+                    raise ValueError(f"LLM schema referenced unknown node column `{node.source_column}`.")
+                node.feature_columns = [feature for feature in node.feature_columns if feature in valid_columns]
+            for edge in schema.edge_types:
+                invalid = [column for column in edge.source_columns if column not in valid_columns]
+                if invalid:
+                    raise ValueError(f"LLM schema referenced unknown edge column `{invalid[0]}`.")
+            scored_schema = GraphQualityScorer().assess(profile, schema)
+            schema.quality_score = scored_schema.final_score
+            schema.warnings = _dedupe([*schema.warnings, *scored_schema.warnings])
+            schema.strengths = _dedupe([*schema.strengths, *scored_schema.strengths])
+            schema.weaknesses = _dedupe([*schema.weaknesses, *scored_schema.weaknesses])
+        response.schemas = sorted(response.schemas, key=lambda schema: schema.quality_score, reverse=True)
+        response.warnings = _dedupe(response.warnings)
+        return response
 
     def explain(
         self,
@@ -447,6 +538,10 @@ class AISchemaService:
         if len(profile.id_columns) < 2:
             warnings.append("AI schema analysis fell back to weak graph signal because fewer than 2 IDs were found.")
         return warnings
+
+    def _cache_key(self, profile: DatasetProfile) -> str:
+        digest = hashlib.sha256(profile.model_dump_json().encode("utf-8")).hexdigest()
+        return f"{self.llm_engine.model}:{digest}"
 
 
 def _title_from_column(column_name: str) -> str:
