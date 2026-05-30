@@ -4,7 +4,16 @@ import { useEffect, useState } from "react"
 
 import { GraphExplorer } from "@/components/graph/GraphExplorer"
 import { api, apiBaseUrl } from "@/lib/api"
-import type { BaselineRunResponse, ExportBundle, GraphPreview, GraphSchema, ProjectDetail } from "@/types"
+import type {
+  AISchemaResponse,
+  BaselineRunResponse,
+  ColumnSemanticAnalysis,
+  ExportBundle,
+  GraphPreview,
+  GraphSchema,
+  ProjectDetail,
+  SchemaExplanationResponse,
+} from "@/types"
 
 
 interface ProjectPageProps {
@@ -20,6 +29,10 @@ export default function ProjectPage({ params }: ProjectPageProps) {
   const [exportBundle, setExportBundle] = useState<ExportBundle | null>(null)
   const [baseline, setBaseline] = useState<BaselineRunResponse | null>(null)
   const [baselineStatus, setBaselineStatus] = useState<string>("")
+  const [aiResponse, setAiResponse] = useState<AISchemaResponse | null>(null)
+  const [aiStatus, setAiStatus] = useState<string>("")
+  const [schemaExplanation, setSchemaExplanation] = useState<string>("")
+  const [explanationStatus, setExplanationStatus] = useState<string>("")
   const [error, setError] = useState<string>("")
 
   useEffect(() => {
@@ -57,6 +70,54 @@ export default function ProjectPage({ params }: ProjectPageProps) {
       setError(err instanceof Error ? err.message : "Baseline run failed.")
     } finally {
       setBaselineStatus("")
+    }
+  }
+
+  async function runAiSchemaAnalysis() {
+    setAiStatus("Analyzing with AI...")
+    setSchemaExplanation("")
+    try {
+      const response = await api.post<AISchemaResponse>(`/ai/schema/analyze/${params.id}`)
+      setAiResponse(response.data)
+      const nextSchemaId = response.data.schemas[0]?.id ?? ""
+      setProject((current) =>
+        current
+          ? {
+              ...current,
+              graph_schemas: response.data.schemas,
+              selected_schema_id: nextSchemaId,
+              status: response.data.mode === "llm" ? "ai_schema_recommended" : "ai_schema_heuristic",
+            }
+          : current,
+      )
+      setSelectedSchema(nextSchemaId)
+      setPreview(null)
+      setBaseline(null)
+      setExportBundle(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "AI schema analysis failed.")
+    } finally {
+      setAiStatus("")
+    }
+  }
+
+  async function explainSchema(graphSchema: GraphSchema) {
+    if (!project?.dataset_profile) {
+      setError("Project must be profiled before schema explanation.")
+      return
+    }
+    setExplanationStatus("Generating explanation...")
+    try {
+      const response = await api.post<SchemaExplanationResponse>("/ai/schema/explain", {
+        profile: project.dataset_profile,
+        schema: graphSchema,
+        semantics: aiResponse?.semantics ?? null,
+      })
+      setSchemaExplanation(response.data.explanation)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Schema explanation failed.")
+    } finally {
+      setExplanationStatus("")
     }
   }
 
@@ -103,6 +164,14 @@ export default function ProjectPage({ params }: ProjectPageProps) {
           />
         </section>
 
+        <AiSchemaPanel
+          aiResponse={aiResponse}
+          aiStatus={aiStatus}
+          disabled={!project.dataset_profile}
+          onAnalyze={runAiSchemaAnalysis}
+          semantics={aiResponse?.semantics ?? null}
+        />
+
         {schema ? (
           <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -117,12 +186,21 @@ export default function ProjectPage({ params }: ProjectPageProps) {
               >
                 Build Preview
               </button>
+              <button
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 disabled:opacity-50"
+                disabled={Boolean(explanationStatus)}
+                onClick={() => explainSchema(schema)}
+                type="button"
+              >
+                {explanationStatus || "Explain Schema"}
+              </button>
             </div>
             <p className="mt-3 text-sm leading-6 text-slate-600">{schema.description}</p>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               <SchemaItems title="Nodes" items={schema.node_types.map((node) => `${node.name} from ${node.source_column}`)} />
               <SchemaItems title="Edges" items={schema.edge_types.map((edge) => `${edge.source} ${edge.relation} ${edge.target}`)} />
             </div>
+            {schemaExplanation ? <ExplanationBlock explanation={schemaExplanation} /> : null}
           </section>
         ) : null}
 
@@ -162,6 +240,94 @@ function Overview({ project }: { project: ProjectDetail }) {
       ) : (
         <p className="mt-3 text-sm text-slate-600">No profile yet.</p>
       )}
+    </section>
+  )
+}
+
+function AiSchemaPanel({
+  aiResponse,
+  aiStatus,
+  disabled,
+  onAnalyze,
+  semantics,
+}: {
+  aiResponse: AISchemaResponse | null
+  aiStatus: string
+  disabled: boolean
+  onAnalyze: () => void
+  semantics: ColumnSemanticAnalysis | null
+}) {
+  const topSemantics = semantics?.columns.slice(0, 8) ?? []
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-medium text-slate-500">AI Graph Engineer</p>
+          <h2 className="mt-1 text-xl font-semibold">
+            {aiResponse ? `${aiResponse.mode.replaceAll("_", " ")} schema analysis` : "Schema understanding"}
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Run the AI schema layer to interpret columns, replace the project schema set with ranked AI proposals,
+            and unlock schema-specific explanations.
+          </p>
+        </div>
+        <button
+          className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          disabled={disabled || Boolean(aiStatus)}
+          onClick={onAnalyze}
+          type="button"
+        >
+          {aiStatus || "Run AI Schema"}
+        </button>
+      </div>
+
+      {semantics ? (
+        <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_1.2fr]">
+          <div className="rounded-md border border-slate-200 p-4">
+            <h3 className="text-sm font-semibold text-slate-700">Dataset read</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">{semantics.dataset_summary}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {semantics.potential_tasks.map((task) => (
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-graph-blue" key={task}>
+                  {task}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="overflow-hidden rounded-md border border-slate-200">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 text-slate-500">
+                <tr>
+                  <th className="p-2">Column</th>
+                  <th className="p-2">Role</th>
+                  <th className="p-2">Meaning</th>
+                  <th className="p-2">Confidence</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topSemantics.map((column) => (
+                  <tr className="border-t border-slate-100" key={column.column_name}>
+                    <td className="p-2 font-medium text-slate-800">{column.column_name}</td>
+                    <td className="p-2 text-slate-600">{column.role}</td>
+                    <td className="p-2 text-slate-600">{column.semantic_meaning}</td>
+                    <td className="p-2 text-slate-600">{Math.round(column.confidence * 100)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : null}
+
+      {aiResponse?.warnings.length ? (
+        <ul className="mt-4 grid gap-2 text-sm text-amber-800">
+          {aiResponse.warnings.map((warning) => (
+            <li className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2" key={warning}>
+              {warning}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </section>
   )
 }
@@ -255,6 +421,23 @@ function SchemaItems({ title, items }: { title: string; items: string[] }) {
           <li key={item}>{item}</li>
         ))}
       </ul>
+    </div>
+  )
+}
+
+function ExplanationBlock({ explanation }: { explanation: string }) {
+  return (
+    <div className="mt-5 rounded-md border border-slate-200 bg-slate-50 p-4">
+      <h3 className="text-sm font-semibold text-slate-700">Schema explanation</h3>
+      <div className="mt-3 grid gap-2 text-sm leading-6 text-slate-600">
+        {explanation
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .map((line) => (
+            <p key={line}>{line.replace(/^#+\s*/, "")}</p>
+          ))}
+      </div>
     </div>
   )
 }

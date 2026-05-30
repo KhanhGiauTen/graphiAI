@@ -1,4 +1,5 @@
 import asyncio
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 
@@ -160,6 +161,29 @@ def test_ai_schema_analyze_endpoint_contract() -> None:
     assert body["mode"] == "heuristic_fallback"
     assert len(body["schemas"]) == 3
     assert body["semantics"]["dataset_domain"] == "banking/fintech"
+
+
+def test_project_ai_schema_endpoint_saves_ai_schemas() -> None:
+    with TestClient(app) as client:
+        upload_response = client.post(
+            "/api/v1/upload",
+            files={"file": ("fraud_transactions.csv", (Path(__file__).parent / "fixtures" / "fraud_transactions.csv").read_bytes(), "text/csv")},
+        )
+        assert upload_response.status_code == 200
+        project_id = upload_response.json()["project_id"]
+        assert client.post(f"/api/v1/profile/{project_id}").status_code == 200
+
+        response = client.post(f"/api/v1/ai/schema/analyze/{project_id}")
+        assert response.status_code == 200
+        body = response.json()
+        assert body["mode"] == "heuristic_fallback"
+        assert body["schemas"][0]["id"].startswith("ai_")
+
+        project_response = client.get(f"/api/v1/projects/{project_id}")
+        assert project_response.status_code == 200
+        project = project_response.json()
+        assert project["status"] == "ai_schema_heuristic"
+        assert project["graph_schemas"][0]["id"].startswith("ai_")
 
 
 def test_ai_schema_explain_endpoint_contract() -> None:
