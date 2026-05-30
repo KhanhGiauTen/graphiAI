@@ -19,6 +19,11 @@ const phases = [
     label: "AI schema",
     detail: "LLM column semantics, ranked schema proposals, explanations, and fallbacks.",
   },
+  {
+    title: "Phase 4",
+    label: "Graph ML demo",
+    detail: "PyG export, starter notebook, and local baseline metrics for selected schemas.",
+  },
 ]
 
 export default function Home() {
@@ -36,15 +41,15 @@ export default function Home() {
               </h1>
               <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
                 Upload event-style CSV data, infer graph schemas, inspect quality warnings,
-                preview relationships, and export graph-learning starter code.
+                explore relationships, run graph baselines, and export graph-learning starter code.
               </p>
             </div>
             <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
               <p className="text-sm font-medium text-slate-500">Current milestone</p>
-              <p className="mt-2 text-xl font-semibold">Phase 1 workflow</p>
+              <p className="mt-2 text-xl font-semibold">Core graph ML demo</p>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Upload a CSV, profile columns, generate graph schemas, preview a sample,
-                and export NetworkX-ready files.
+                Upload a CSV, profile columns, run AI schema analysis, explore a sampled graph,
+                run a baseline, and export NetworkX/PyG-ready files.
               </p>
               <a
                 className="mt-4 inline-flex rounded-md bg-graph-blue px-4 py-2 text-sm font-semibold text-white"

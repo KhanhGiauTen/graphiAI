@@ -47,7 +47,8 @@ export default function UploadPage() {
         </a>
         <h1 className="mt-6 text-3xl font-semibold">Upload Dataset</h1>
         <p className="mt-3 text-sm leading-6 text-slate-600">
-          Phase 1 supports CSV files. The backend will profile columns and create rule-based graph schemas.
+          Upload a CSV to profile columns and create initial rule-based graph schemas. You can run AI schema
+          analysis, interactive preview, export, and baseline evaluation on the project page.
         </p>
 
         <form className="mt-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm" onSubmit={handleSubmit}>

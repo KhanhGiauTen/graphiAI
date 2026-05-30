@@ -2,7 +2,7 @@
 
 > AI-assisted tabular-to-graph modeling platform for graph analytics and GNN-ready exports.
 
-Graphify AI helps users upload tabular datasets, infer useful graph structures, inspect graph quality, visualize a sample graph, and export runnable graph construction code. The first product slice is intentionally focused on single-table event datasets with repeated entity IDs, such as fraud transactions, ratings, orders, student-course activity, and access logs.
+Graphify AI helps users upload tabular datasets, infer useful graph structures, inspect graph quality, visualize graph samples, run a lightweight graph baseline, and export runnable graph construction code. The current product slice is focused on single-table event datasets with repeated entity IDs, such as fraud transactions, ratings, orders, student-course activity, and access logs.
 
 ## Product Thesis
 
@@ -20,7 +20,21 @@ Most business and research datasets start as tables. Before using graph analytic
 | Phase 5 | Productization | Login, saved projects, share links, deployment |
 | Phase 6 | Platform expansion | In-app experiments, teams, public API, advanced AutoML |
 
-Phase 1 is the first demo milestone. Phase 3 is the strongest AI milestone. Phase 4 is the strongest research/portfolio milestone.
+The core local demo now covers the Phase 1-4 story: upload, profile, recommend schemas, run AI-assisted schema understanding, inspect an interactive graph preview, export NetworkX/PyG artifacts, and run a lightweight graph baseline.
+
+## Current Status
+
+| Area | Status |
+|------|--------|
+| CSV upload and profiling | Implemented |
+| Rule-based schema recommendation | Implemented |
+| AI schema understanding | Implemented with OpenAI-compatible provider and heuristic fallback |
+| Graph quality guardrails | Implemented in backend services |
+| Interactive graph preview | Implemented with search, filters, node focus, and details |
+| Export bundle | Implemented: schema, nodes, edges, labels, NetworkX, PyG helper, notebook |
+| Baseline experiment runner | Implemented: degree/feature threshold baseline with fallback ranking |
+| Product accounts/sharing/API keys | Basic implementation |
+| Production hardening | Still pending: deployment, stronger auth policy, rate limiting, CI, observability |
 
 ## MVP Priority
 
@@ -43,43 +57,69 @@ Phase 1 is the first demo milestone. Phase 3 is the strongest AI milestone. Phas
 ```text
 Upload transaction CSV
   -> profile columns and detect roles
-  -> recommend graph schemas
+  -> recommend rule-based graph schemas
+  -> run AI Graph Engineer for semantic schema proposals
   -> explain nodes, edges, features, labels
-  -> preview a sampled graph
-  -> export schema + nodes + edges + NetworkX builder
+  -> preview a sampled graph interactively
+  -> run a lightweight graph baseline
+  -> export schema + graph tables + NetworkX/PyG starter code
 ```
 
 ## Initial Tech Stack
 
 ```text
-Frontend: Next.js 14 + TypeScript + TailwindCSS + React Flow
-Backend:  FastAPI + Python 3.11 + Pandas + NetworkX + SQLAlchemy
+Frontend: Next.js 16 + TypeScript + TailwindCSS
+Backend:  FastAPI + Python 3.11+ + Pandas + NetworkX + SQLAlchemy
 Storage:  SQLite for metadata, local uploads/exports for MVP
-AI/ML:    Rule-based first, OpenAI-compatible LLM later, PyG export later
+AI/ML:    Rule-based recommender, OpenAI-compatible LLM provider, PyG export, local graph baseline
 Infra:    Local dev scripts first, Docker/deployment after MVP is stable
 ```
 
 PostgreSQL, Redis, Celery, teams, public API, and in-app model training are deliberately deferred until the core workflow is useful.
 
-## Local Phase 0 Setup
+## Local Setup
 
 Backend:
 
-```bash
+```powershell
 cd backend
-pip install -r requirements.txt
-python -m pytest
-uvicorn app.main:app --reload
+..\.venv\Scripts\python.exe -m pip install -r requirements.txt
+..\.venv\Scripts\python.exe -m pytest
+..\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 Frontend:
 
-```bash
+```powershell
+$env:PATH = "$PWD\.tools\node-v20.12.2-win-x64;$env:PATH"
 cd frontend
 npm install
 npm run typecheck
-npm run dev
+npm run dev -- --hostname 127.0.0.1 --port 3000
 ```
+
+If you use your own Node.js installation, the `.tools` PATH step is not required.
+
+## Optional LLM Setup
+
+By default, AI schema analysis runs in deterministic heuristic fallback mode. To enable a hosted OpenAI-compatible model, create `backend/.env`:
+
+```env
+AI_SCHEMA_MODE=llm
+OPENAI_API_KEY=your_api_key
+OPENAI_BASE_URL=https://api.openai.com/v1
+LLM_MODEL=gpt-4.1-mini
+```
+
+Restart the backend after changing environment variables. Invalid, unavailable, or hallucinated LLM output falls back to the local heuristic path.
+
+## Main Local URLs
+
+| Surface | URL |
+|---------|-----|
+| Frontend app | `http://127.0.0.1:3000` |
+| Backend health | `http://127.0.0.1:8000/health` |
+| API docs | `http://127.0.0.1:8000/docs` |
 
 ## Demo Datasets
 
