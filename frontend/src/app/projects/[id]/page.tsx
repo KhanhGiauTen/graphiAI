@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 
+import { GraphExplorer } from "@/components/graph/GraphExplorer"
 import { api, apiBaseUrl } from "@/lib/api"
 import type { ExportBundle, GraphPreview, GraphSchema, ProjectDetail } from "@/types"
 
@@ -106,7 +107,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
           </section>
         ) : null}
 
-        {preview ? <PreviewPanel preview={preview} /> : null}
+        {preview ? <GraphExplorer preview={preview} /> : null}
 
         <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="text-lg font-semibold">Sharing</h2>
@@ -222,39 +223,5 @@ function SchemaItems({ title, items }: { title: string; items: string[] }) {
         ))}
       </ul>
     </div>
-  )
-}
-
-function PreviewPanel({ preview }: { preview: GraphPreview }) {
-  return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-semibold">Graph Preview</h2>
-      <div className="mt-4 grid gap-3 text-sm text-slate-600 md:grid-cols-4">
-        <p>Nodes: {preview.stats.num_nodes}</p>
-        <p>Edges: {preview.stats.num_edges}</p>
-        <p>Components: {preview.stats.num_connected_components}</p>
-        <p>Avg degree: {preview.stats.avg_degree}</p>
-      </div>
-      <div className="mt-5 max-h-72 overflow-auto rounded-md border border-slate-200">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-slate-500">
-            <tr>
-              <th className="p-2">Node</th>
-              <th className="p-2">Type</th>
-              <th className="p-2">Label</th>
-            </tr>
-          </thead>
-          <tbody>
-            {preview.nodes.slice(0, 50).map((node) => (
-              <tr className="border-t border-slate-100" key={node.id}>
-                <td className="p-2">{node.id}</td>
-                <td className="p-2">{node.type}</td>
-                <td className="p-2">{node.label}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
   )
 }
