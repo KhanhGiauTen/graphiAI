@@ -1,6 +1,9 @@
 from app.schemas.dataset import ColumnProfile, DatasetProfile
 from app.schemas.graph import EdgeType, GraphSchema, NodeType
 from app.services.graph_quality import GraphQualityScorer
+from fastapi.testclient import TestClient
+
+from app.main import app
 
 
 def column(
@@ -73,6 +76,9 @@ def test_fraud_dataset_is_promising_or_recommended() -> None:
 
     assert report.suitability in {"recommended", "promising_but_review"}
     assert report.final_score >= 55
+    assert 0 <= report.component_scores.entity_confidence <= 1
+    assert 0 <= report.component_scores.relationship_confidence <= 1
+    assert report.component_scores.feature_richness > 0
     assert any("imbalanced" in warning.lower() for warning in report.warnings)
 
 
@@ -97,6 +103,7 @@ def test_plain_dataset_without_entities_is_not_recommended() -> None:
 
     assert report.suitability in {"weak_graph_signal", "not_recommended"}
     assert any("fewer than 2 entity" in warning.lower() for warning in report.warnings)
+    assert any(check.name == "entity_columns" and check.status == "fail" for check in report.health_checks)
 
 
 def test_leakage_columns_are_flagged() -> None:
@@ -107,3 +114,56 @@ def test_leakage_columns_are_flagged() -> None:
     report = GraphQualityScorer().assess(profile, fraud_schema())
 
     assert any("chargeback_date" in warning for warning in report.leakage_warnings)
+
+
+def test_quality_endpoint_accepts_schema_alias() -> None:
+    payload = {
+        "profile": fraud_profile().model_dump(),
+        "schema": fraud_schema().model_dump(),
+    }
+
+    with TestClient(app) as client:
+        response = client.post("/api/v1/quality/assess", json=payload)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["suitability"] in {"recommended", "promising_but_review"}
+    assert body["component_scores"]["interpretability"] >= 0.7
+
+
+def test_quality_endpoint_accepts_graph_schema_field_name() -> None:
+    payload = {
+        "profile": fraud_profile().model_dump(),
+        "graph_schema": fraud_schema().model_dump(),
+    }
+
+    with TestClient(app) as client:
+        response = client.post("/api/v1/quality/assess", json=payload)
+
+    assert response.status_code == 200
+    assert response.json()["final_score"] > 0
+
+
+def test_missing_values_high_cardinality_and_temporal_warnings_are_deduped() -> None:
+    columns = [
+        column("user_id", "id", 0.30),
+        column("merchant_id", "id", 0.10),
+        column("session_token", "categorical", 0.99),
+        column("event_time", "timestamp", 0.80),
+    ]
+    profile = DatasetProfile(
+        filename="events.csv",
+        row_count=1000,
+        column_count=len(columns),
+        total_missing_rate=0.22,
+        memory_usage_mb=0.2,
+        columns=columns,
+        id_columns=["user_id", "merchant_id"],
+        has_timestamps=True,
+    )
+
+    report = GraphQualityScorer().assess(profile)
+
+    assert any("missing rate is 22.0%" in warning for warning in report.warnings)
+    assert any("session_token" in warning for warning in report.warnings)
+    assert report.warnings.count("Use time-aware splits for timestamped data to reduce leakage risk.") == 1

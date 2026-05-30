@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     EXPORT_DIR: str = str(BASE_DIR / "exports")
     MAX_UPLOAD_SIZE_MB: int = 50
     ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]
+    AI_SCHEMA_MODE: str = "heuristic"
+    LLM_MODEL: str = "local-heuristic"
+    OPENAI_API_KEY: str | None = None
 
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod

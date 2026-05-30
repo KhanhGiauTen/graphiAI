@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import init_db
-from app.routers import health, quality
+from app.routers import ai_schema, health, quality
 
 
 def prepare_runtime() -> None:
@@ -38,4 +38,5 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(health.router, prefix="/api/v1")
+app.include_router(ai_schema.router, prefix="/api/v1")
 app.include_router(quality.router, prefix="/api/v1")

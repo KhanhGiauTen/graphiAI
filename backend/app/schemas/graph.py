@@ -29,6 +29,9 @@ class GraphSchema(BaseModel):
     suggested_tasks: list[str] = Field(default_factory=list)
     quality_score: float = Field(ge=0, le=100)
     warnings: list[str] = Field(default_factory=list)
+    strengths: list[str] = Field(default_factory=list)
+    weaknesses: list[str] = Field(default_factory=list)
+    recommended_models: list[dict[str, str]] = Field(default_factory=list)
 
 
 class GraphStats(BaseModel):

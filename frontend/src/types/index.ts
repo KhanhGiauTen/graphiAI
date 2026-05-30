@@ -60,6 +60,9 @@ export interface GraphSchema {
   suggested_tasks: string[]
   quality_score: number
   warnings: string[]
+  strengths: string[]
+  weaknesses: string[]
+  recommended_models: Array<Record<string, string>>
 }
 
 export interface GraphStats {
@@ -143,5 +146,40 @@ export interface GraphQualityReport {
   warnings: string[]
   leakage_warnings: string[]
   health_checks: HealthCheck[]
+  explanation: string
+}
+
+export type SemanticRole =
+  | "entity_id"
+  | "edge_feature"
+  | "node_feature"
+  | "label"
+  | "timestamp"
+  | "irrelevant"
+
+export interface ColumnSemantic {
+  column_name: string
+  semantic_meaning: string
+  entity_hint?: string | null
+  role: SemanticRole
+  reasoning: string
+  confidence: number
+}
+
+export interface ColumnSemanticAnalysis {
+  columns: ColumnSemantic[]
+  dataset_domain: string
+  dataset_summary: string
+  potential_tasks: string[]
+}
+
+export interface AISchemaResponse {
+  mode: string
+  semantics: ColumnSemanticAnalysis
+  schemas: GraphSchema[]
+  warnings: string[]
+}
+
+export interface SchemaExplanationResponse {
   explanation: string
 }
