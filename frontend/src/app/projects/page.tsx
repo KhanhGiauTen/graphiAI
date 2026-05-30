@@ -25,7 +25,10 @@ export default function ProjectsPage() {
             <h1 className="text-3xl font-semibold">Projects</h1>
             <p className="mt-2 text-sm text-slate-600">Saved datasets and graph schemas.</p>
           </div>
-          <a className="rounded-md bg-graph-blue px-4 py-2 text-sm font-semibold text-white" href="/upload">New Project</a>
+          <div className="flex gap-3">
+            <a className="rounded-md border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700" href="/settings">Settings</a>
+            <a className="rounded-md bg-graph-blue px-4 py-2 text-sm font-semibold text-white" href="/upload">New Project</a>
+          </div>
         </div>
         {error ? <p className="mt-6 text-sm text-rose-700">{error}</p> : null}
         <div className="mt-6 grid gap-4 md:grid-cols-2">

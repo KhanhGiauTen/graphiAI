@@ -25,7 +25,7 @@ Base = declarative_base()
 
 
 def init_db() -> None:
-    from app.models import project, user  # noqa: F401
+    from app.models import api_key, project, user  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
     _migrate_sqlite_project_columns()

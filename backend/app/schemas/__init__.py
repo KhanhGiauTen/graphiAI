@@ -7,6 +7,7 @@ from app.schemas.ai_schema import (
     SchemaExplanationResponse,
 )
 from app.schemas.auth import TokenResponse, UserCreate, UserLogin, UserRead
+from app.schemas.api_key import ApiKeyCreate, ApiKeyCreateResponse, ApiKeyRead, UsageSummary
 from app.schemas.dataset import ColumnProfile, DatasetProfile
 from app.schemas.graph import EdgeType, GraphPreview, GraphSchema, NodeType
 from app.schemas.project import ApiResponse, ExportBundle, ProjectDetail, ProjectRead, UploadResponse
@@ -16,6 +17,9 @@ __all__ = [
     "ApiResponse",
     "AISchemaRequest",
     "AISchemaResponse",
+    "ApiKeyCreate",
+    "ApiKeyCreateResponse",
+    "ApiKeyRead",
     "ColumnProfile",
     "ColumnSemantic",
     "ColumnSemanticAnalysis",
@@ -33,6 +37,7 @@ __all__ = [
     "SchemaExplanationRequest",
     "SchemaExplanationResponse",
     "UploadResponse",
+    "UsageSummary",
     "UserCreate",
     "UserLogin",
     "UserRead",

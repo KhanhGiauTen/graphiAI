@@ -139,6 +139,25 @@ export interface TokenResponse {
   user: UserRead
 }
 
+export interface ApiKeyRead {
+  id: string
+  name: string
+  is_active: boolean
+  request_count: number
+  last_used_at?: string | null
+  created_at: string
+}
+
+export interface ApiKeyCreateResponse {
+  api_key: string
+  record: ApiKeyRead
+}
+
+export interface UsageSummary {
+  active_api_keys: number
+  total_public_api_requests: number
+}
+
 export interface ApiResponse<T> {
   success: boolean
   data: T | null
