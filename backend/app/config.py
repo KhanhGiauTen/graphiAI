@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     AI_SCHEMA_MODE: str = "heuristic"
     LLM_MODEL: str = "local-heuristic"
     OPENAI_API_KEY: str | None = None
+    SECRET_KEY: str = "change-this-in-production"
+    ACCESS_TOKEN_EXPIRE_SECONDS: int = 604800
 
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod

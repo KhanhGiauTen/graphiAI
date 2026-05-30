@@ -42,6 +42,11 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     setExportBundle(response.data)
   }
 
+  async function shareProject() {
+    const response = await api.post<ProjectDetail>(`/projects/${params.id}/share`)
+    setProject(response.data)
+  }
+
   if (error) {
     return <main className="p-8 text-rose-700">{error}</main>
   }
@@ -102,6 +107,18 @@ export default function ProjectPage({ params }: ProjectPageProps) {
         ) : null}
 
         {preview ? <PreviewPanel preview={preview} /> : null}
+
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-semibold">Sharing</h2>
+          <button className="mt-4 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white" onClick={shareProject} type="button">
+            Create read-only link
+          </button>
+          {project.share_token ? (
+            <a className="ml-4 text-sm font-medium text-graph-blue" href={`/s/${project.share_token}`}>
+              Open shared view
+            </a>
+          ) : null}
+        </section>
       </div>
     </main>
   )

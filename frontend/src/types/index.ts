@@ -126,6 +126,19 @@ export interface ExportBundle {
   files: string[]
 }
 
+export interface UserRead {
+  id: string
+  email: string
+  full_name?: string | null
+  created_at: string
+}
+
+export interface TokenResponse {
+  access_token: string
+  token_type: string
+  user: UserRead
+}
+
 export interface ApiResponse<T> {
   success: boolean
   data: T | null

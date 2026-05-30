@@ -14,6 +14,9 @@ class ProjectRead(BaseModel):
     file_size_bytes: int | None = None
     status: str
     selected_schema_id: str | None = None
+    user_id: str | None = None
+    visibility: str = "private"
+    share_token: str | None = None
     created_at: datetime
     updated_at: datetime
 

@@ -8,13 +8,19 @@ from app.config import settings
 from app.database import get_db
 from app.models.project import Project
 from app.schemas.project import UploadResponse
+from app.models.user import User
+from app.services.auth import get_optional_user
 
 
 router = APIRouter(tags=["upload"])
 
 
 @router.post("/upload", response_model=UploadResponse)
-async def upload_dataset(file: UploadFile = File(...), db: Session = Depends(get_db)) -> UploadResponse:
+async def upload_dataset(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: User | None = Depends(get_optional_user),
+) -> UploadResponse:
     original_filename = file.filename or "dataset.csv"
     if Path(original_filename).suffix.lower() != ".csv":
         raise HTTPException(status_code=400, detail="Only .csv files are supported in Phase 1")
@@ -36,6 +42,7 @@ async def upload_dataset(file: UploadFile = File(...), db: Session = Depends(get
         file_path=str(stored_path),
         file_size_bytes=len(content),
         status="uploaded",
+        user_id=current_user.id if current_user else None,
     )
     db.add(project)
     db.commit()

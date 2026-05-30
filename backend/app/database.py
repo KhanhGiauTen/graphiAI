@@ -1,6 +1,6 @@
 from collections.abc import Generator
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from app.config import settings
@@ -25,9 +25,10 @@ Base = declarative_base()
 
 
 def init_db() -> None:
-    from app.models import project  # noqa: F401
+    from app.models import project, user  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
+    _migrate_sqlite_project_columns()
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -36,3 +37,22 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
+
+
+def _migrate_sqlite_project_columns() -> None:
+    if not settings.DATABASE_URL.startswith("sqlite"):
+        return
+
+    columns = {
+        "user_id": "VARCHAR(36)",
+        "visibility": "VARCHAR(20) DEFAULT 'private'",
+        "share_token": "VARCHAR(100)",
+    }
+    with engine.begin() as connection:
+        existing = {
+            row[1]
+            for row in connection.execute(text("PRAGMA table_info(projects)")).fetchall()
+        }
+        for column_name, column_type in columns.items():
+            if column_name not in existing:
+                connection.execute(text(f"ALTER TABLE projects ADD COLUMN {column_name} {column_type}"))

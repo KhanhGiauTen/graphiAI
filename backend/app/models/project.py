@@ -23,6 +23,9 @@ class Project(Base):
     dataset_profile_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     graph_schemas_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     selected_schema_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    user_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    visibility: Mapped[str] = mapped_column(String(20), default="private", nullable=False)
+    share_token: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,

@@ -52,6 +52,9 @@ export default function Home() {
               >
                 Upload CSV
               </a>
+              <a className="ml-3 inline-flex text-sm font-semibold text-graph-blue" href="/login">
+                Sign in
+              </a>
             </div>
           </div>
         </header>
