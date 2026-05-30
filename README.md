@@ -20,7 +20,7 @@ Most business and research datasets start as tables. Before using graph analytic
 | Phase 5 | Productization | Login, saved projects, share links, deployment |
 | Phase 6 | Platform expansion | In-app experiments, teams, public API, advanced AutoML |
 
-The core local demo now covers the Phase 1-4 story: upload, profile, recommend schemas, run AI-assisted schema understanding, inspect an interactive graph preview, export NetworkX/PyG artifacts, and run a lightweight graph baseline.
+The core local demo now covers the Phase 1-4 story: choose a demo dataset or upload CSV, profile columns, recommend schemas, run AI-assisted schema understanding, inspect an interactive graph preview, export NetworkX/PyG artifacts, and run a lightweight graph baseline.
 
 ## Current Status
 
@@ -33,8 +33,10 @@ The core local demo now covers the Phase 1-4 story: upload, profile, recommend s
 | Interactive graph preview | Implemented with search, filters, node focus, and details |
 | Export bundle | Implemented: schema, nodes, edges, labels, NetworkX, PyG helper, notebook |
 | Baseline experiment runner | Implemented: degree/feature threshold baseline with fallback ranking |
+| Demo readiness | Implemented: built-in demo dataset picker and project progress timeline |
+| CI and Docker Compose | Implemented: backend tests, frontend checks, and local full-stack compose |
 | Product accounts/sharing/API keys | Basic implementation |
-| Production hardening | Still pending: deployment, stronger auth policy, rate limiting, CI, observability |
+| Production hardening | Still pending: hosted deployment, stronger auth policy, rate limiting, observability |
 
 ## Local Demo Screenshots
 
@@ -85,10 +87,10 @@ Frontend: Next.js 16 + TypeScript + TailwindCSS
 Backend:  FastAPI + Python 3.11+ + Pandas + NetworkX + SQLAlchemy
 Storage:  SQLite for metadata, local uploads/exports for MVP
 AI/ML:    Rule-based recommender, OpenAI-compatible LLM provider, PyG export, local graph baseline
-Infra:    Local dev scripts first, Docker/deployment after MVP is stable
+Infra:    Local dev scripts, Docker Compose, GitHub Actions CI
 ```
 
-PostgreSQL, Redis, Celery, teams, public API, and in-app model training are deliberately deferred until the core workflow is useful.
+PostgreSQL, Redis, Celery, teams, and deeper in-app model training are deliberately deferred until the core workflow is useful.
 
 ## Local Setup
 
@@ -112,6 +114,14 @@ npm run dev -- --hostname 127.0.0.1 --port 3000
 ```
 
 If you use your own Node.js installation, the `.tools` PATH step is not required.
+
+Full stack with Docker Compose:
+
+```powershell
+docker compose up --build
+```
+
+The frontend will be available at `http://127.0.0.1:3000` and the backend at `http://127.0.0.1:8000`. Compose stores uploads, exports, and SQLite metadata in the `graphify_data` Docker volume.
 
 ## Optional LLM Setup
 
@@ -144,14 +154,15 @@ Restart the backend after changing environment variables. Invalid, unavailable, 
 | Phase 3 | AI schema understanding with OpenAI-compatible provider and local fallback |
 | Phase 4 | PyG/notebook export and in-app baseline experiment runner |
 | Phase 5/6 slice | Basic auth, saved projects, share links, API keys, and public API surface |
+| Sprint 1 | Docker Compose, GitHub Actions CI, demo dataset picker, project progress timeline |
 
 ## Project Completion Estimate
 
 | Scope | Estimate |
 |-------|----------|
-| Local portfolio demo | 90-92% |
-| Practical prototype | 70% |
-| Production SaaS | 35-40% |
+| Local portfolio demo | 94-95% |
+| Practical prototype | 75% |
+| Production SaaS | 40% |
 
 The prototype is strong enough to demonstrate the product thesis locally. Production work remains around deployment, CI/CD, access control, rate limits, observability, and more serious graph ML experiment infrastructure.
 
@@ -162,6 +173,8 @@ The prototype is strong enough to demonstrate the product thesis locally. Produc
 | `fraud_transactions.csv` | Banking/FinTech | Fraud detection |
 | `user_ratings.csv` | E-commerce | Recommendation/link prediction |
 | `student_courses.csv` | Education | Performance prediction |
+
+These datasets are also available directly from the Upload page, so a local demo can start without manually selecting a file.
 
 ## Phase Files
 

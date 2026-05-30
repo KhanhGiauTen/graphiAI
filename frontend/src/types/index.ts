@@ -123,6 +123,22 @@ export interface UploadResponse {
   status: string
 }
 
+export interface DemoDataset {
+  id: string
+  name: string
+  filename: string
+  domain: string
+  description: string
+  suggested_task: string
+  rows: number
+}
+
+export interface DemoDatasetCreateResponse {
+  project_id: string
+  dataset: DemoDataset
+  status: string
+}
+
 export interface ExportBundle {
   project_id: string
   zip_path: string

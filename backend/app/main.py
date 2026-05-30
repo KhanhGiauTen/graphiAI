@@ -11,6 +11,7 @@ from app.routers import (
     ai_schema,
     api_keys,
     auth,
+    demo,
     experiments,
     export,
     graph,
@@ -56,6 +57,7 @@ app.include_router(health.router, prefix="/api/v1")
 app.include_router(ai_schema.router, prefix="/api/v1")
 app.include_router(api_keys.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
+app.include_router(demo.router, prefix="/api/v1")
 app.include_router(experiments.router, prefix="/api/v1")
 app.include_router(export.router, prefix="/api/v1")
 app.include_router(graph.router, prefix="/api/v1")

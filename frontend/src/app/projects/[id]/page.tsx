@@ -252,6 +252,40 @@ export default function ProjectPage() {
 
   const schema = project.graph_schemas.find((item) => item.id === selectedSchema) ?? project.graph_schemas[0]
   const captureMode = searchParams.get("capture")
+  const progressSteps = [
+    {
+      label: "Uploaded",
+      done: Boolean(project.original_filename),
+    },
+    {
+      label: "Profiled",
+      done: Boolean(project.dataset_profile),
+    },
+    {
+      label: "Schemas",
+      done: project.graph_schemas.length > 0,
+    },
+    {
+      label: "AI Schema",
+      done: Boolean(aiResponse) || project.status.startsWith("ai_schema"),
+      active: Boolean(aiStatus),
+    },
+    {
+      label: "Preview",
+      done: Boolean(preview),
+      active: Boolean(previewStatus),
+    },
+    {
+      label: "Baseline",
+      done: Boolean(baseline),
+      active: Boolean(baselineStatus),
+    },
+    {
+      label: "Export",
+      done: Boolean(exportBundle),
+      active: Boolean(exportStatus),
+    },
+  ]
 
   if (captureMode === "ai") {
     return (
@@ -309,6 +343,8 @@ export default function ProjectPage() {
             {actionError}
           </div>
         ) : null}
+
+        <ProjectProgress steps={progressSteps} />
 
         <section className="grid gap-4 lg:grid-cols-3">
           <Overview project={project} />
@@ -393,6 +429,53 @@ function CaptureLoading({ label }: { label: string }) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
       {label}
+    </section>
+  )
+}
+
+function ProjectProgress({
+  steps,
+}: {
+  steps: Array<{
+    label: string
+    done: boolean
+    active?: boolean
+  }>
+}) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-slate-500">Project progress</p>
+          <h2 className="mt-1 text-lg font-semibold">Demo workflow</h2>
+        </div>
+        <p className="text-sm text-slate-600">{steps.filter((step) => step.done).length}/{steps.length} complete</p>
+      </div>
+      <ol className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-7">
+        {steps.map((step, index) => {
+          const stateClass = step.done
+            ? "border-graph-green bg-green-50 text-green-800"
+            : step.active
+              ? "border-graph-blue bg-blue-50 text-graph-blue"
+              : "border-slate-200 bg-slate-50 text-slate-500"
+          const dotClass = step.done
+            ? "bg-graph-green text-white"
+            : step.active
+              ? "bg-graph-blue text-white"
+              : "bg-white text-slate-500"
+          return (
+            <li className={`min-h-20 rounded-md border p-3 ${stateClass}`} key={step.label}>
+              <div className="flex items-center gap-2">
+                <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-full border text-xs font-semibold ${dotClass}`}>
+                  {index + 1}
+                </span>
+                <span className="text-sm font-semibold">{step.label}</span>
+              </div>
+              <p className="mt-2 text-xs">{step.done ? "Done" : step.active ? "Running" : "Pending"}</p>
+            </li>
+          )
+        })}
+      </ol>
     </section>
   )
 }

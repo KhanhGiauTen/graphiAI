@@ -1,0 +1,51 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      APP_NAME: Graphify AI
+      APP_VERSION: 0.1.0
+      ENVIRONMENT: development
+      DATABASE_URL: sqlite:////data/graphify.db
+      UPLOAD_DIR: /data/uploads
+      EXPORT_DIR: /data/exports
+      MAX_UPLOAD_SIZE_MB: 50
+      ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      AI_SCHEMA_MODE: heuristic
+      LLM_MODEL: ${LLM_MODEL:-local-heuristic}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      LLM_TIMEOUT_SECONDS: 20
+      LLM_MAX_RETRIES: 2
+      SECRET_KEY: ${SECRET_KEY:-change-this-in-production}
+      ACCESS_TOKEN_EXPIRE_SECONDS: 604800
+    ports:
+      - "8000:8000"
+    volumes:
+      - graphify_data:/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://127.0.0.1:8000/api/v1
+    environment:
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:8000/api/v1
+      NEXT_TELEMETRY_DISABLED: 1
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  graphify_data:
