@@ -3,6 +3,7 @@ import sys
 import time
 import zipfile
 import json
+import os
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -81,6 +82,7 @@ def test_phase1_api_e2e_upload_profile_schema_graph_export(tmp_path: Path) -> No
         bundle = export_response.json()
         phase1_files = {"schema.json", "graph_nodes.csv", "graph_edges.csv", "networkx_builder.py"}
         assert phase1_files.issubset(set(bundle["files"]))
+        assert {"graph_labels.csv", "pyg_dataset.py", "graphify_baseline.ipynb"}.issubset(set(bundle["files"]))
 
     zip_path = Path(bundle["zip_path"])
     assert zip_path.exists()
@@ -99,11 +101,26 @@ def test_phase1_api_e2e_upload_profile_schema_graph_export(tmp_path: Path) -> No
     notebook = json.loads((tmp_path / "graphify_baseline.ipynb").read_text(encoding="utf-8"))
     assert notebook["nbformat"] == 4
     assert any("build_hetero_data" in "".join(cell["source"]) for cell in notebook["cells"])
+    assert any("degree features" in "".join(cell["source"]) for cell in notebook["cells"])
+
+    labels = (tmp_path / "graph_labels.csv").read_text(encoding="utf-8")
+    assert "is_fraud" in labels
+    assert "Transaction:T001" in labels
 
     pyg_code = (tmp_path / "pyg_dataset.py").read_text(encoding="utf-8")
     assert "from torch_geometric.data import HeteroData" in pyg_code
     assert "transaction_id" in pyg_code
     compile(pyg_code, "pyg_dataset.py", "exec")
+
+    old_cwd = Path.cwd()
+    try:
+        os.chdir(tmp_path)
+        namespace: dict[str, object] = {}
+        for cell in notebook["cells"]:
+            if cell["cell_type"] == "code":
+                exec("".join(cell["source"]), namespace)
+    finally:
+        os.chdir(old_cwd)
 
 
 def test_upload_rejects_non_csv() -> None:
