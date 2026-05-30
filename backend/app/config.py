@@ -1,7 +1,6 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -24,7 +23,7 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = str(BASE_DIR / "uploads")
     EXPORT_DIR: str = str(BASE_DIR / "exports")
     MAX_UPLOAD_SIZE_MB: int = 50
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000"
     AI_SCHEMA_MODE: str = "heuristic"
     LLM_MODEL: str = "local-heuristic"
     OPENAI_BASE_URL: str = "https://api.openai.com/v1"
@@ -38,27 +37,19 @@ class Settings(BaseSettings):
     RATE_LIMIT_ENABLED: bool = True
     RATE_LIMIT_REQUESTS: int = 600
     RATE_LIMIT_WINDOW_SECONDS: int = 60
-    RATE_LIMIT_EXEMPT_PATHS: list[str] = [
-        "/health",
-        "/api/v1/health",
-        "/docs",
-        "/redoc",
-        "/openapi.json",
-    ]
+    RATE_LIMIT_EXEMPT_PATHS: str = "/health,/api/v1/health,/docs,/redoc,/openapi.json"
 
-    @field_validator("ALLOWED_ORIGINS", mode="before")
-    @classmethod
-    def parse_allowed_origins(cls, value: str | list[str]) -> list[str]:
-        if isinstance(value, str):
-            return [origin.strip() for origin in value.split(",") if origin.strip()]
-        return value
+    @property
+    def allowed_origins(self) -> list[str]:
+        return _split_csv(self.ALLOWED_ORIGINS)
 
-    @field_validator("RATE_LIMIT_EXEMPT_PATHS", mode="before")
-    @classmethod
-    def parse_rate_limit_exempt_paths(cls, value: str | list[str]) -> list[str]:
-        if isinstance(value, str):
-            return [path.strip() for path in value.split(",") if path.strip()]
-        return value
+    @property
+    def rate_limit_exempt_paths(self) -> list[str]:
+        return _split_csv(self.RATE_LIMIT_EXEMPT_PATHS)
+
+
+def _split_csv(value: str) -> list[str]:
+    return [item.strip() for item in value.split(",") if item.strip()]
 
 
 @lru_cache

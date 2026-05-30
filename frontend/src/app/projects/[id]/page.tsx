@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { useParams, useSearchParams } from "next/navigation"
 
 import { GraphExplorer } from "@/components/graph/GraphExplorer"
+import { QualityPanel } from "@/components/quality/QualityPanel"
 import { api, apiBaseUrl } from "@/lib/api"
 import type {
   AISchemaResponse,
@@ -11,8 +12,10 @@ import type {
   ColumnSemanticAnalysis,
   ExportBundle,
   GraphPreview,
+  GraphQualityReport,
   GraphSchema,
   ProjectDetail,
+  ProjectReport,
   SchemaExplanationResponse,
 } from "@/types"
 
@@ -30,6 +33,9 @@ export default function ProjectPage() {
   const [exportStatus, setExportStatus] = useState<string>("")
   const [baseline, setBaseline] = useState<BaselineRunResponse | null>(null)
   const [baselineStatus, setBaselineStatus] = useState<string>("")
+  const [qualityReport, setQualityReport] = useState<GraphQualityReport | null>(null)
+  const [projectReport, setProjectReport] = useState<ProjectReport | null>(null)
+  const [reportStatus, setReportStatus] = useState<string>("")
   const [aiResponse, setAiResponse] = useState<AISchemaResponse | null>(null)
   const [aiStatus, setAiStatus] = useState<string>("")
   const [schemaExplanation, setSchemaExplanation] = useState<string>("")
@@ -79,6 +85,42 @@ export default function ProjectPage() {
       window.setTimeout(() => document.getElementById(targetId)?.scrollIntoView({ block: "start" }), 250)
     }
   }, [aiResponse, baseline, preview, searchParams])
+
+  useEffect(() => {
+    const currentSchema =
+      project?.graph_schemas.find((item) => item.id === selectedSchema) ?? project?.graph_schemas[0]
+    if (!project?.dataset_profile || !currentSchema) {
+      setQualityReport(null)
+      setProjectReport(null)
+      return
+    }
+
+    let cancelled = false
+    setReportStatus("Assessing schema quality...")
+    api
+      .get<ProjectReport>(`/projects/${projectId}/report`, { params: { schema_id: currentSchema.id } })
+      .then((response) => {
+        if (cancelled) {
+          return
+        }
+        setProjectReport(response.data)
+        setQualityReport(response.data.quality)
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setActionError(err instanceof Error ? err.message : "Project report failed.")
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setReportStatus("")
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [project?.dataset_profile, project?.graph_schemas, projectId, selectedSchema])
 
   async function buildPreview(schemaId: string) {
     setActionError("")
@@ -147,6 +189,8 @@ export default function ProjectPage() {
       setPreview(null)
       setBaseline(null)
       setExportBundle(null)
+      setQualityReport(null)
+      setProjectReport(null)
     } catch (err) {
       setActionError(err instanceof Error ? err.message : "AI schema analysis failed.")
     } finally {
@@ -191,6 +235,8 @@ export default function ProjectPage() {
     setBaseline(null)
     setSchemaExplanation("")
     setExportBundle(null)
+    setQualityReport(null)
+    setProjectReport(null)
     setActionError("")
   }
 
@@ -264,6 +310,11 @@ export default function ProjectPage() {
     {
       label: "Schemas",
       done: project.graph_schemas.length > 0,
+    },
+    {
+      label: "Quality",
+      done: Boolean(qualityReport),
+      active: Boolean(reportStatus),
     },
     {
       label: "AI Schema",
@@ -364,6 +415,16 @@ export default function ProjectPage() {
           />
         </section>
 
+        {qualityReport ? (
+          <QualityPanel report={qualityReport} />
+        ) : reportStatus ? (
+          <CaptureLoading label={reportStatus} />
+        ) : null}
+
+        {projectReport ? (
+          <ProjectReportPanel onDownload={() => downloadProjectReport(projectReport)} report={projectReport} />
+        ) : null}
+
         <AiSchemaPanel
           aiResponse={aiResponse}
           aiStatus={aiStatus}
@@ -433,6 +494,18 @@ function CaptureLoading({ label }: { label: string }) {
   )
 }
 
+function downloadProjectReport(report: ProjectReport) {
+  const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" })
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement("a")
+  anchor.href = url
+  anchor.download = `graphify-report-${report.project_id}.json`
+  document.body.appendChild(anchor)
+  anchor.click()
+  anchor.remove()
+  URL.revokeObjectURL(url)
+}
+
 function ProjectProgress({
   steps,
 }: {
@@ -451,7 +524,7 @@ function ProjectProgress({
         </div>
         <p className="text-sm text-slate-600">{steps.filter((step) => step.done).length}/{steps.length} complete</p>
       </div>
-      <ol className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-7">
+      <ol className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-8">
         {steps.map((step, index) => {
           const stateClass = step.done
             ? "border-graph-green bg-green-50 text-green-800"
@@ -477,6 +550,64 @@ function ProjectProgress({
         })}
       </ol>
     </section>
+  )
+}
+
+function ProjectReportPanel({ onDownload, report }: { onDownload: () => void; report: ProjectReport }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-medium text-slate-500">Schema report</p>
+          <h2 className="mt-1 text-xl font-semibold">{report.schema_name}</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Generated {new Date(report.generated_at).toLocaleString()} for {report.filename ?? "dataset"}.
+          </p>
+        </div>
+        <button
+          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700"
+          onClick={onDownload}
+          type="button"
+        >
+          Download JSON
+        </button>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-4">
+        <ReportMetric label="Rows" value={report.overview.row_count.toLocaleString()} />
+        <ReportMetric label="Columns" value={report.overview.column_count.toLocaleString()} />
+        <ReportMetric label="Missing" value={`${(report.overview.missing_rate * 100).toFixed(1)}%`} />
+        <ReportMetric label="Quality" value={`${report.quality.final_score.toFixed(1)}/100`} />
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-3">
+        <ReportList title="Recommendations" items={report.recommendations} />
+        <ReportList title="Next steps" items={report.next_steps} />
+        <ReportList title="Suggested tasks" items={report.suggested_tasks} />
+      </div>
+    </section>
+  )
+}
+
+function ReportMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border border-slate-200 p-4">
+      <p className="text-sm font-medium text-slate-500">{label}</p>
+      <p className="mt-2 text-xl font-semibold text-slate-900">{value}</p>
+    </div>
+  )
+}
+
+function ReportList({ items, title }: { items: string[]; title: string }) {
+  return (
+    <div className="rounded-md border border-slate-200 p-4">
+      <h3 className="text-sm font-semibold text-slate-700">{title}</h3>
+      <ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-600">
+        {(items.length ? items : ["None"]).map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </div>
   )
 }
 

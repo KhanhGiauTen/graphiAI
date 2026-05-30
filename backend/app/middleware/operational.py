@@ -55,7 +55,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.enabled = settings.RATE_LIMIT_ENABLED if enabled is None else enabled
         self.requests_per_window = requests_per_window or settings.RATE_LIMIT_REQUESTS
         self.window_seconds = window_seconds or settings.RATE_LIMIT_WINDOW_SECONDS
-        self.exempt_paths = tuple(exempt_paths if exempt_paths is not None else settings.RATE_LIMIT_EXEMPT_PATHS)
+        self.exempt_paths = tuple(exempt_paths if exempt_paths is not None else settings.rate_limit_exempt_paths)
         self._hits: dict[str, deque[float]] = {}
         self._lock = Lock()
 

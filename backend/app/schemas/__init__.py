@@ -12,7 +12,15 @@ from app.schemas.dataset import ColumnProfile, DatasetProfile
 from app.schemas.demo import DemoDataset, DemoDatasetCreateResponse
 from app.schemas.experiment import BaselineMetrics, BaselinePrediction, BaselineRunRequest, BaselineRunResponse
 from app.schemas.graph import EdgeType, GraphPreview, GraphSchema, NodeType
-from app.schemas.project import ApiResponse, ExportBundle, ProjectDetail, ProjectRead, UploadResponse
+from app.schemas.project import (
+    ApiResponse,
+    ExportBundle,
+    ProjectDetail,
+    ProjectRead,
+    ProjectReport,
+    ProjectReportOverview,
+    UploadResponse,
+)
 from app.schemas.quality import GraphQualityReport, GraphQualityRequest, HealthCheck
 
 __all__ = [
@@ -42,6 +50,8 @@ __all__ = [
     "NodeType",
     "ProjectRead",
     "ProjectDetail",
+    "ProjectReport",
+    "ProjectReportOverview",
     "SchemaExplanationRequest",
     "SchemaExplanationResponse",
     "UploadResponse",

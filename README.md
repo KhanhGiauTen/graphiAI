@@ -31,6 +31,7 @@ The core local demo now covers the Phase 1-4 story: choose a demo dataset or upl
 | AI schema understanding | Implemented with OpenAI-compatible provider and heuristic fallback |
 | Graph quality guardrails | Implemented in backend services |
 | Interactive graph preview | Implemented with search, filters, node focus, and details |
+| Schema quality report | Implemented: project report API, quality panel, recommendations, JSON download |
 | Export bundle | Implemented: schema, nodes, edges, labels, NetworkX, PyG helper, notebook |
 | Baseline experiment runner | Implemented: degree/feature threshold baseline with fallback ranking |
 | Demo readiness | Implemented: built-in demo dataset picker and project progress timeline |
@@ -157,14 +158,15 @@ Restart the backend after changing environment variables. Invalid, unavailable, 
 | Phase 5/6 slice | Basic auth, saved projects, share links, API keys, and public API surface |
 | Sprint 1 | Docker Compose, GitHub Actions CI, demo dataset picker, project progress timeline |
 | Sprint 2 | Request IDs/timing headers, security headers, configurable in-memory rate limit |
+| Sprint 3 | Project schema report, quality score dashboard, recommendations, JSON report download |
 
 ## Project Completion Estimate
 
 | Scope | Estimate |
 |-------|----------|
-| Local portfolio demo | 94-95% |
-| Practical prototype | 75% |
-| Production SaaS | 40% |
+| Local portfolio demo | 96% |
+| Practical prototype | 78% |
+| Production SaaS | 42% |
 
 The prototype is strong enough to demonstrate the product thesis locally. Production work remains around deployment, CI/CD, access control, rate limits, observability, and more serious graph ML experiment infrastructure.
 

@@ -116,6 +116,31 @@ export interface ProjectDetail extends ProjectRead {
   graph_schemas: GraphSchema[]
 }
 
+export interface ProjectReportOverview {
+  row_count: number
+  column_count: number
+  missing_rate: number
+  id_columns: string[]
+  label_columns: string[]
+  has_timestamps: boolean
+}
+
+export interface ProjectReport {
+  project_id: string
+  project_name?: string | null
+  filename?: string | null
+  generated_at: string
+  schema_id: string
+  schema_name: string
+  overview: ProjectReportOverview
+  node_types: string[]
+  edge_types: string[]
+  suggested_tasks: string[]
+  quality: GraphQualityReport
+  recommendations: string[]
+  next_steps: string[]
+}
+
 export interface UploadResponse {
   project_id: string
   filename: string

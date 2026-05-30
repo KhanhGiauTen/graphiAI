@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from app.config import Settings
 from app.middleware import RateLimitMiddleware
 
 
@@ -52,3 +53,13 @@ def test_rate_limit_middleware_respects_exempt_paths() -> None:
     assert first.status_code == 200
     assert second.status_code == 200
     assert "X-RateLimit-Limit" not in second.headers
+
+
+def test_settings_parse_comma_separated_runtime_lists() -> None:
+    settings = Settings(
+        ALLOWED_ORIGINS="http://localhost:3000,http://127.0.0.1:3000",
+        RATE_LIMIT_EXEMPT_PATHS="/health,/docs,/openapi.json",
+    )
+
+    assert settings.allowed_origins == ["http://localhost:3000", "http://127.0.0.1:3000"]
+    assert settings.rate_limit_exempt_paths == ["/health", "/docs", "/openapi.json"]
