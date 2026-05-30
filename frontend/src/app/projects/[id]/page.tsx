@@ -26,13 +26,16 @@ export default function ProjectPage({ params }: ProjectPageProps) {
   const [project, setProject] = useState<ProjectDetail | null>(null)
   const [selectedSchema, setSelectedSchema] = useState<string>("")
   const [preview, setPreview] = useState<GraphPreview | null>(null)
+  const [previewStatus, setPreviewStatus] = useState<string>("")
   const [exportBundle, setExportBundle] = useState<ExportBundle | null>(null)
+  const [exportStatus, setExportStatus] = useState<string>("")
   const [baseline, setBaseline] = useState<BaselineRunResponse | null>(null)
   const [baselineStatus, setBaselineStatus] = useState<string>("")
   const [aiResponse, setAiResponse] = useState<AISchemaResponse | null>(null)
   const [aiStatus, setAiStatus] = useState<string>("")
   const [schemaExplanation, setSchemaExplanation] = useState<string>("")
   const [explanationStatus, setExplanationStatus] = useState<string>("")
+  const [actionError, setActionError] = useState<string>("")
   const [error, setError] = useState<string>("")
 
   useEffect(() => {
@@ -46,19 +49,36 @@ export default function ProjectPage({ params }: ProjectPageProps) {
   }, [params.id])
 
   async function buildPreview(schemaId: string) {
-    const response = await api.post<GraphPreview>(`/graph/build/${params.id}`, {
-      schema_id: schemaId,
-      sample_size: 300,
-    })
-    setPreview(response.data)
+    setActionError("")
+    setPreviewStatus("Building preview...")
+    try {
+      const response = await api.post<GraphPreview>(`/graph/build/${params.id}`, {
+        schema_id: schemaId,
+        sample_size: 300,
+      })
+      setPreview(response.data)
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Graph preview failed.")
+    } finally {
+      setPreviewStatus("")
+    }
   }
 
   async function exportProject(schemaId: string) {
-    const response = await api.post<ExportBundle>(`/export/${params.id}`, { schema_id: schemaId })
-    setExportBundle(response.data)
+    setActionError("")
+    setExportStatus("Creating ZIP...")
+    try {
+      const response = await api.post<ExportBundle>(`/export/${params.id}`, { schema_id: schemaId })
+      setExportBundle(response.data)
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Export failed.")
+    } finally {
+      setExportStatus("")
+    }
   }
 
   async function runBaseline(schemaId: string) {
+    setActionError("")
     setBaselineStatus("Running baseline...")
     try {
       const response = await api.post<BaselineRunResponse>(`/experiments/baseline/${params.id}`, {
@@ -67,13 +87,14 @@ export default function ProjectPage({ params }: ProjectPageProps) {
       })
       setBaseline(response.data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Baseline run failed.")
+      setActionError(err instanceof Error ? err.message : "Baseline run failed.")
     } finally {
       setBaselineStatus("")
     }
   }
 
   async function runAiSchemaAnalysis() {
+    setActionError("")
     setAiStatus("Analyzing with AI...")
     setSchemaExplanation("")
     try {
@@ -95,7 +116,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
       setBaseline(null)
       setExportBundle(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "AI schema analysis failed.")
+      setActionError(err instanceof Error ? err.message : "AI schema analysis failed.")
     } finally {
       setAiStatus("")
     }
@@ -103,9 +124,10 @@ export default function ProjectPage({ params }: ProjectPageProps) {
 
   async function explainSchema(graphSchema: GraphSchema) {
     if (!project?.dataset_profile) {
-      setError("Project must be profiled before schema explanation.")
+      setActionError("Project must be profiled before schema explanation.")
       return
     }
+    setActionError("")
     setExplanationStatus("Generating explanation...")
     try {
       const response = await api.post<SchemaExplanationResponse>("/ai/schema/explain", {
@@ -115,15 +137,29 @@ export default function ProjectPage({ params }: ProjectPageProps) {
       })
       setSchemaExplanation(response.data.explanation)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Schema explanation failed.")
+      setActionError(err instanceof Error ? err.message : "Schema explanation failed.")
     } finally {
       setExplanationStatus("")
     }
   }
 
   async function shareProject() {
-    const response = await api.post<ProjectDetail>(`/projects/${params.id}/share`)
-    setProject(response.data)
+    setActionError("")
+    try {
+      const response = await api.post<ProjectDetail>(`/projects/${params.id}/share`)
+      setProject(response.data)
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Share link creation failed.")
+    }
+  }
+
+  function selectSchema(schemaId: string) {
+    setSelectedSchema(schemaId)
+    setPreview(null)
+    setBaseline(null)
+    setSchemaExplanation("")
+    setExportBundle(null)
+    setActionError("")
   }
 
   if (error) {
@@ -147,17 +183,24 @@ export default function ProjectPage({ params }: ProjectPageProps) {
           <p className="mt-2 text-sm text-slate-600">Status: {project.status}</p>
         </header>
 
+        {actionError ? (
+          <div className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+            {actionError}
+          </div>
+        ) : null}
+
         <section className="grid gap-4 lg:grid-cols-3">
           <Overview project={project} />
           <SchemaList
             schemas={project.graph_schemas}
             selectedSchema={selectedSchema}
-            onSelect={setSelectedSchema}
+            onSelect={selectSchema}
           />
           <ExportPanel
             baselineStatus={baselineStatus}
             bundle={exportBundle}
             disabled={!schema}
+            exportStatus={exportStatus}
             onExport={() => schema && exportProject(schema.id)}
             onRunBaseline={() => schema && runBaseline(schema.id)}
             projectId={params.id}
@@ -180,11 +223,12 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                 <h2 className="mt-1 text-xl font-semibold">{schema.name}</h2>
               </div>
               <button
-                className="rounded-md bg-graph-blue px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-md bg-graph-blue px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                disabled={Boolean(previewStatus)}
                 onClick={() => buildPreview(schema.id)}
                 type="button"
               >
-                Build Preview
+                {previewStatus || "Build Preview"}
               </button>
               <button
                 className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 disabled:opacity-50"
@@ -367,6 +411,7 @@ function ExportPanel({
   baselineStatus,
   bundle,
   disabled,
+  exportStatus,
   onExport,
   onRunBaseline,
   projectId,
@@ -374,6 +419,7 @@ function ExportPanel({
   baselineStatus: string
   bundle: ExportBundle | null
   disabled: boolean
+  exportStatus: string
   onExport: () => void
   onRunBaseline: () => void
   projectId: string
@@ -386,11 +432,11 @@ function ExportPanel({
       </p>
       <button
         className="mt-4 rounded-md bg-graph-green px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-        disabled={disabled}
+        disabled={disabled || Boolean(exportStatus)}
         onClick={onExport}
         type="button"
       >
-        Create ZIP
+        {exportStatus || "Create ZIP"}
       </button>
       {bundle ? (
         <a
