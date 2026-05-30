@@ -41,11 +41,17 @@ export default function Home() {
             </div>
             <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
               <p className="text-sm font-medium text-slate-500">Current milestone</p>
-              <p className="mt-2 text-xl font-semibold">Phase 0 scaffold</p>
+              <p className="mt-2 text-xl font-semibold">Phase 1 workflow</p>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                The upload workflow starts in Phase 1 after the backend and frontend
-                foundations are verified.
+                Upload a CSV, profile columns, generate graph schemas, preview a sample,
+                and export NetworkX-ready files.
               </p>
+              <a
+                className="mt-4 inline-flex rounded-md bg-graph-blue px-4 py-2 text-sm font-semibold text-white"
+                href="/upload"
+              >
+                Upload CSV
+              </a>
             </div>
           </div>
         </header>

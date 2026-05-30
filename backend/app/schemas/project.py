@@ -1,7 +1,10 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from app.schemas.dataset import DatasetProfile
+from app.schemas.graph import GraphSchema
 
 
 class ProjectRead(BaseModel):
@@ -15,6 +18,24 @@ class ProjectRead(BaseModel):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class ProjectDetail(ProjectRead):
+    dataset_profile: DatasetProfile | None = None
+    graph_schemas: list[GraphSchema] = Field(default_factory=list)
+
+
+class UploadResponse(BaseModel):
+    project_id: str
+    filename: str
+    size_bytes: int
+    status: str
+
+
+class ExportBundle(BaseModel):
+    project_id: str
+    zip_path: str
+    files: list[str]
 
 
 class ApiResponse(BaseModel):

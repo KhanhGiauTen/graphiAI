@@ -108,6 +108,24 @@ export interface ProjectRead {
   updated_at: string
 }
 
+export interface ProjectDetail extends ProjectRead {
+  dataset_profile?: DatasetProfile | null
+  graph_schemas: GraphSchema[]
+}
+
+export interface UploadResponse {
+  project_id: string
+  filename: string
+  size_bytes: number
+  status: string
+}
+
+export interface ExportBundle {
+  project_id: string
+  zip_path: string
+  files: string[]
+}
+
 export interface ApiResponse<T> {
   success: boolean
   data: T | null

@@ -8,7 +8,7 @@ from app.schemas.ai_schema import (
 )
 from app.schemas.dataset import ColumnProfile, DatasetProfile
 from app.schemas.graph import EdgeType, GraphPreview, GraphSchema, NodeType
-from app.schemas.project import ApiResponse, ProjectRead
+from app.schemas.project import ApiResponse, ExportBundle, ProjectDetail, ProjectRead, UploadResponse
 from app.schemas.quality import GraphQualityReport, GraphQualityRequest, HealthCheck
 
 __all__ = [
@@ -27,6 +27,9 @@ __all__ = [
     "HealthCheck",
     "NodeType",
     "ProjectRead",
+    "ProjectDetail",
     "SchemaExplanationRequest",
     "SchemaExplanationResponse",
+    "UploadResponse",
+    "ExportBundle",
 ]
