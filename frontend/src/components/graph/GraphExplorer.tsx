@@ -116,7 +116,7 @@ export function GraphExplorer({ preview }: GraphExplorerProps) {
   }
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm" id="graph-explorer">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-medium text-slate-500">Graph preview</p>

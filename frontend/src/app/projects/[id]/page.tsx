@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { useParams, useSearchParams } from "next/navigation"
 
 import { GraphExplorer } from "@/components/graph/GraphExplorer"
 import { api, apiBaseUrl } from "@/lib/api"
@@ -16,13 +17,11 @@ import type {
 } from "@/types"
 
 
-interface ProjectPageProps {
-  params: {
-    id: string
-  }
-}
-
-export default function ProjectPage({ params }: ProjectPageProps) {
+export default function ProjectPage() {
+  const routeParams = useParams<{ id: string }>()
+  const searchParams = useSearchParams()
+  const demoRan = useRef(false)
+  const projectId = routeParams.id
   const [project, setProject] = useState<ProjectDetail | null>(null)
   const [selectedSchema, setSelectedSchema] = useState<string>("")
   const [preview, setPreview] = useState<GraphPreview | null>(null)
@@ -40,19 +39,52 @@ export default function ProjectPage({ params }: ProjectPageProps) {
 
   useEffect(() => {
     api
-      .get<ProjectDetail>(`/projects/${params.id}`)
+      .get<ProjectDetail>(`/projects/${projectId}`)
       .then((response) => {
         setProject(response.data)
         setSelectedSchema(response.data.selected_schema_id ?? response.data.graph_schemas[0]?.id ?? "")
       })
       .catch((err) => setError(err instanceof Error ? err.message : "Failed to load project."))
-  }, [params.id])
+  }, [projectId])
+
+  useEffect(() => {
+    if (searchParams.get("demo") !== "1" || demoRan.current || !project?.dataset_profile || !selectedSchema) {
+      return
+    }
+    demoRan.current = true
+    void runDemoSequence()
+  }, [project, searchParams, selectedSchema])
+
+  useEffect(() => {
+    const focus = searchParams.get("focus")
+    if (!focus) {
+      return
+    }
+    const targetId =
+      focus === "ai"
+        ? "ai-schema-panel"
+        : focus === "graph"
+          ? "graph-explorer"
+          : focus === "baseline"
+            ? "baseline-results"
+            : ""
+    if (!targetId) {
+      return
+    }
+    const ready =
+      (focus === "ai" && aiResponse) ||
+      (focus === "graph" && preview) ||
+      (focus === "baseline" && baseline)
+    if (ready) {
+      window.setTimeout(() => document.getElementById(targetId)?.scrollIntoView({ block: "start" }), 250)
+    }
+  }, [aiResponse, baseline, preview, searchParams])
 
   async function buildPreview(schemaId: string) {
     setActionError("")
     setPreviewStatus("Building preview...")
     try {
-      const response = await api.post<GraphPreview>(`/graph/build/${params.id}`, {
+      const response = await api.post<GraphPreview>(`/graph/build/${projectId}`, {
         schema_id: schemaId,
         sample_size: 300,
       })
@@ -68,7 +100,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     setActionError("")
     setExportStatus("Creating ZIP...")
     try {
-      const response = await api.post<ExportBundle>(`/export/${params.id}`, { schema_id: schemaId })
+      const response = await api.post<ExportBundle>(`/export/${projectId}`, { schema_id: schemaId })
       setExportBundle(response.data)
     } catch (err) {
       setActionError(err instanceof Error ? err.message : "Export failed.")
@@ -81,7 +113,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     setActionError("")
     setBaselineStatus("Running baseline...")
     try {
-      const response = await api.post<BaselineRunResponse>(`/experiments/baseline/${params.id}`, {
+      const response = await api.post<BaselineRunResponse>(`/experiments/baseline/${projectId}`, {
         schema_id: schemaId,
         test_size: 0.3,
       })
@@ -98,7 +130,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     setAiStatus("Analyzing with AI...")
     setSchemaExplanation("")
     try {
-      const response = await api.post<AISchemaResponse>(`/ai/schema/analyze/${params.id}`)
+      const response = await api.post<AISchemaResponse>(`/ai/schema/analyze/${projectId}`)
       setAiResponse(response.data)
       const nextSchemaId = response.data.schemas[0]?.id ?? ""
       setProject((current) =>
@@ -146,7 +178,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
   async function shareProject() {
     setActionError("")
     try {
-      const response = await api.post<ProjectDetail>(`/projects/${params.id}/share`)
+      const response = await api.post<ProjectDetail>(`/projects/${projectId}/share`)
       setProject(response.data)
     } catch (err) {
       setActionError(err instanceof Error ? err.message : "Share link creation failed.")
@@ -162,6 +194,54 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     setActionError("")
   }
 
+  async function runDemoSequence() {
+    setActionError("")
+    setAiStatus("Preparing demo...")
+    try {
+      const ai = await api.post<AISchemaResponse>(`/ai/schema/analyze/${projectId}`)
+      const graphSchema = ai.data.schemas[0]
+      if (!graphSchema || !project?.dataset_profile) {
+        throw new Error("Demo project does not have a schema-ready profile.")
+      }
+
+      setAiResponse(ai.data)
+      setProject((current) =>
+        current
+          ? {
+              ...current,
+              graph_schemas: ai.data.schemas,
+              selected_schema_id: graphSchema.id,
+              status: ai.data.mode === "llm" ? "ai_schema_recommended" : "ai_schema_heuristic",
+            }
+          : current,
+      )
+      setSelectedSchema(graphSchema.id)
+
+      const explanation = await api.post<SchemaExplanationResponse>("/ai/schema/explain", {
+        profile: project.dataset_profile,
+        schema: graphSchema,
+        semantics: ai.data.semantics,
+      })
+      setSchemaExplanation(explanation.data.explanation)
+
+      const graph = await api.post<GraphPreview>(`/graph/build/${projectId}`, {
+        schema_id: graphSchema.id,
+        sample_size: 300,
+      })
+      setPreview(graph.data)
+
+      const experiment = await api.post<BaselineRunResponse>(`/experiments/baseline/${projectId}`, {
+        schema_id: graphSchema.id,
+        test_size: 0.3,
+      })
+      setBaseline(experiment.data)
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Demo sequence failed.")
+    } finally {
+      setAiStatus("")
+    }
+  }
+
   if (error) {
     return <main className="p-8 text-rose-700">{error}</main>
   }
@@ -171,6 +251,47 @@ export default function ProjectPage({ params }: ProjectPageProps) {
   }
 
   const schema = project.graph_schemas.find((item) => item.id === selectedSchema) ?? project.graph_schemas[0]
+  const captureMode = searchParams.get("capture")
+
+  if (captureMode === "ai") {
+    return (
+      <main className="min-h-screen bg-panel px-6 py-8 text-ink">
+        <div className="mx-auto grid max-w-7xl gap-6">
+          {aiResponse ? (
+            <AiSchemaPanel
+              aiResponse={aiResponse}
+              aiStatus={aiStatus}
+              disabled={!project.dataset_profile}
+              onAnalyze={runAiSchemaAnalysis}
+              semantics={aiResponse.semantics}
+            />
+          ) : (
+            <CaptureLoading label="Preparing AI schema demo..." />
+          )}
+        </div>
+      </main>
+    )
+  }
+
+  if (captureMode === "graph") {
+    return (
+      <main className="min-h-screen bg-panel px-6 py-8 text-ink">
+        <div className="mx-auto grid max-w-7xl gap-6">
+          {preview ? <GraphExplorer preview={preview} /> : <CaptureLoading label="Preparing graph explorer demo..." />}
+        </div>
+      </main>
+    )
+  }
+
+  if (captureMode === "baseline") {
+    return (
+      <main className="min-h-screen bg-panel px-6 py-8 text-ink">
+        <div className="mx-auto grid max-w-7xl gap-6">
+          {baseline ? <BaselinePanel baseline={baseline} /> : <CaptureLoading label="Preparing baseline demo..." />}
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-panel px-6 py-8 text-ink">
@@ -203,7 +324,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
             exportStatus={exportStatus}
             onExport={() => schema && exportProject(schema.id)}
             onRunBaseline={() => schema && runBaseline(schema.id)}
-            projectId={params.id}
+            projectId={projectId}
           />
         </section>
 
@@ -268,6 +389,14 @@ export default function ProjectPage({ params }: ProjectPageProps) {
   )
 }
 
+function CaptureLoading({ label }: { label: string }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
+      {label}
+    </section>
+  )
+}
+
 function Overview({ project }: { project: ProjectDetail }) {
   const profile = project.dataset_profile
   return (
@@ -303,7 +432,7 @@ function AiSchemaPanel({
 }) {
   const topSemantics = semantics?.columns.slice(0, 8) ?? []
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm" id="ai-schema-panel">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-medium text-slate-500">AI Graph Engineer</p>
@@ -491,7 +620,7 @@ function ExplanationBlock({ explanation }: { explanation: string }) {
 function BaselinePanel({ baseline }: { baseline: BaselineRunResponse }) {
   const metrics = baseline.metrics
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm" id="baseline-results">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-medium text-slate-500">Experiment baseline</p>

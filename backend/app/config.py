@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = str(BASE_DIR / "uploads")
     EXPORT_DIR: str = str(BASE_DIR / "exports")
     MAX_UPLOAD_SIZE_MB: int = 50
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]
+    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
     AI_SCHEMA_MODE: str = "heuristic"
     LLM_MODEL: str = "local-heuristic"
     OPENAI_BASE_URL: str = "https://api.openai.com/v1"

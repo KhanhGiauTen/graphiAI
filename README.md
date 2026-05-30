@@ -36,6 +36,19 @@ The core local demo now covers the Phase 1-4 story: upload, profile, recommend s
 | Product accounts/sharing/API keys | Basic implementation |
 | Production hardening | Still pending: deployment, stronger auth policy, rate limiting, CI, observability |
 
+## Local Demo Screenshots
+
+| Step | Preview |
+|------|---------|
+| Landing page | ![Landing page](docs/screenshots/01_landing.png) |
+| Upload page | ![Upload page](docs/screenshots/02_upload.png) |
+| Project AI schema | ![Project AI schema](docs/screenshots/03_project_ai_schema.png) |
+| Interactive graph explorer | ![Graph explorer](docs/screenshots/04_graph_explorer.png) |
+| Baseline results | ![Baseline results](docs/screenshots/05_baseline_results.png) |
+| API docs | ![API docs](docs/screenshots/06_api_docs.png) |
+
+See [docs/demo_walkthrough.md](docs/demo_walkthrough.md) for the full demo flow and phase/progress notes.
+
 ## MVP Priority
 
 | Module | Priority | Target Phase |
@@ -120,6 +133,27 @@ Restart the backend after changing environment variables. Invalid, unavailable, 
 | Frontend app | `http://127.0.0.1:3000` |
 | Backend health | `http://127.0.0.1:8000/health` |
 | API docs | `http://127.0.0.1:8000/docs` |
+
+## Implementation Timeline
+
+| Milestone | Result |
+|-----------|--------|
+| Phase 0 | Lean FastAPI + Next.js scaffold with SQLite/local file storage |
+| Phase 1 | CSV upload, profiling, rule schema recommendation, graph preview, export |
+| Phase 2 | Graph quality scoring and leakage/suitability guardrails |
+| Phase 3 | AI schema understanding with OpenAI-compatible provider and local fallback |
+| Phase 4 | PyG/notebook export and in-app baseline experiment runner |
+| Phase 5/6 slice | Basic auth, saved projects, share links, API keys, and public API surface |
+
+## Project Completion Estimate
+
+| Scope | Estimate |
+|-------|----------|
+| Local portfolio demo | 90-92% |
+| Practical prototype | 70% |
+| Production SaaS | 35-40% |
+
+The prototype is strong enough to demonstrate the product thesis locally. Production work remains around deployment, CI/CD, access control, rate limits, observability, and more serious graph ML experiment infrastructure.
 
 ## Demo Datasets
 
