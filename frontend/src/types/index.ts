@@ -129,6 +129,52 @@ export interface ExportBundle {
   files: string[]
 }
 
+export type BaselineMode =
+  | "supervised_classification"
+  | "unsupervised_degree_ranking"
+  | "not_runnable"
+
+export interface BaselineMetrics {
+  accuracy: number
+  precision: number
+  recall: number
+  f1: number
+  support: number
+  positive_label: string
+}
+
+export interface BaselineRule {
+  feature: string
+  threshold: number
+  direction: "gte" | "lte"
+  negative_label: string
+  train_f1: number
+  train_accuracy: number
+}
+
+export interface BaselinePrediction {
+  node_id: string
+  node_type: string
+  score: number
+  predicted_label?: string | null
+  true_label?: string | null
+  features: Record<string, number>
+}
+
+export interface BaselineRunResponse {
+  project_id: string
+  schema_id: string
+  mode: BaselineMode
+  model_name: string
+  target: Record<string, string | null>
+  metrics?: BaselineMetrics | null
+  rule?: BaselineRule | null
+  label_distribution: Record<string, number>
+  top_predictions: BaselinePrediction[]
+  warnings: string[]
+  summary: string
+}
+
 export interface UserRead {
   id: string
   email: string

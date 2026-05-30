@@ -7,7 +7,22 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import init_db
-from app.routers import ai_schema, api_keys, auth, export, graph, health, profile, projects, public_api, quality, schema, share, upload
+from app.routers import (
+    ai_schema,
+    api_keys,
+    auth,
+    experiments,
+    export,
+    graph,
+    health,
+    profile,
+    projects,
+    public_api,
+    quality,
+    schema,
+    share,
+    upload,
+)
 
 
 def prepare_runtime() -> None:
@@ -41,6 +56,7 @@ app.include_router(health.router, prefix="/api/v1")
 app.include_router(ai_schema.router, prefix="/api/v1")
 app.include_router(api_keys.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
+app.include_router(experiments.router, prefix="/api/v1")
 app.include_router(export.router, prefix="/api/v1")
 app.include_router(graph.router, prefix="/api/v1")
 app.include_router(profile.router, prefix="/api/v1")
