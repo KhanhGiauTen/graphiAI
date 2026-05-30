@@ -2,6 +2,7 @@ import subprocess
 import sys
 import time
 import zipfile
+import json
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -13,6 +14,7 @@ from app.services.schema_recommender import RuleBasedSchemaRecommender
 
 FIXTURE_DIR = Path(__file__).parent / "fixtures"
 FRAUD_CSV = FIXTURE_DIR / "fraud_transactions.csv"
+RATINGS_CSV = FIXTURE_DIR / "user_ratings.csv"
 
 
 def test_profiler_detects_expected_fraud_roles() -> None:
@@ -77,7 +79,8 @@ def test_phase1_api_e2e_upload_profile_schema_graph_export(tmp_path: Path) -> No
         )
         assert export_response.status_code == 200
         bundle = export_response.json()
-        assert bundle["files"] == ["schema.json", "graph_nodes.csv", "graph_edges.csv", "networkx_builder.py"]
+        phase1_files = {"schema.json", "graph_nodes.csv", "graph_edges.csv", "networkx_builder.py"}
+        assert phase1_files.issubset(set(bundle["files"]))
 
     zip_path = Path(bundle["zip_path"])
     assert zip_path.exists()
@@ -93,6 +96,15 @@ def test_phase1_api_e2e_upload_profile_schema_graph_export(tmp_path: Path) -> No
     )
     assert "Graph:" in result.stdout
 
+    notebook = json.loads((tmp_path / "graphify_baseline.ipynb").read_text(encoding="utf-8"))
+    assert notebook["nbformat"] == 4
+    assert any("build_hetero_data" in "".join(cell["source"]) for cell in notebook["cells"])
+
+    pyg_code = (tmp_path / "pyg_dataset.py").read_text(encoding="utf-8")
+    assert "from torch_geometric.data import HeteroData" in pyg_code
+    assert "transaction_id" in pyg_code
+    compile(pyg_code, "pyg_dataset.py", "exec")
+
 
 def test_upload_rejects_non_csv() -> None:
     with TestClient(app) as client:
@@ -102,6 +114,28 @@ def test_upload_rejects_non_csv() -> None:
         )
 
     assert response.status_code == 400
+
+
+def test_phase4_export_switches_notebook_to_unsupervised_when_no_label(tmp_path: Path) -> None:
+    with TestClient(app) as client:
+        upload_response = client.post(
+            "/api/v1/upload",
+            files={"file": ("user_ratings.csv", RATINGS_CSV.read_bytes(), "text/csv")},
+        )
+        project_id = upload_response.json()["project_id"]
+        client.post(f"/api/v1/profile/{project_id}")
+        client.post(f"/api/v1/schema/recommend/{project_id}")
+        export_response = client.post(f"/api/v1/export/{project_id}")
+
+    assert export_response.status_code == 200
+    zip_path = Path(export_response.json()["zip_path"])
+    with zipfile.ZipFile(zip_path) as archive:
+        archive.extractall(tmp_path)
+
+    notebook_text = (tmp_path / "graphify_baseline.ipynb").read_text(encoding="utf-8")
+    assert "No label column found" in notebook_text
+    assert "user_id" in (tmp_path / "pyg_dataset.py").read_text(encoding="utf-8")
+    assert "product_id" in (tmp_path / "pyg_dataset.py").read_text(encoding="utf-8")
 
 
 def test_phase1_services_handle_1000_rows_under_three_seconds(tmp_path: Path) -> None:

@@ -172,7 +172,9 @@ function ExportPanel({
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <h2 className="text-lg font-semibold">Export</h2>
-      <p className="mt-3 text-sm leading-6 text-slate-600">Download schema, nodes, edges, and NetworkX builder code.</p>
+      <p className="mt-3 text-sm leading-6 text-slate-600">
+        Download schema, graph tables, NetworkX builder, PyG helper, and a starter notebook.
+      </p>
       <button
         className="mt-4 rounded-md bg-graph-green px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
         disabled={disabled}
