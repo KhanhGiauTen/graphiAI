@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "typecheck": "next typegen && tsc --noEmit"
+    "dev": "node ./node_modules/next/dist/bin/next dev --webpack",
+    "build": "node ./node_modules/next/dist/bin/next build",
+    "start": "node ./node_modules/next/dist/bin/next start",
+    "typecheck": "node ./node_modules/next/dist/bin/next typegen && node ./node_modules/typescript/bin/tsc --noEmit"
   },
   "dependencies": {
     "axios": "^1.16.1",
