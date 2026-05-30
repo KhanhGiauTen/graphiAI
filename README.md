@@ -35,8 +35,9 @@ The core local demo now covers the Phase 1-4 story: choose a demo dataset or upl
 | Baseline experiment runner | Implemented: degree/feature threshold baseline with fallback ranking |
 | Demo readiness | Implemented: built-in demo dataset picker and project progress timeline |
 | CI and Docker Compose | Implemented: backend tests, frontend checks, and local full-stack compose |
+| Operational hardening | Implemented: request IDs, request timing, security headers, configurable rate limit |
 | Product accounts/sharing/API keys | Basic implementation |
-| Production hardening | Still pending: hosted deployment, stronger auth policy, rate limiting, observability |
+| Production hardening | Still pending: hosted deployment, stronger auth policy, persistent rate-limit storage, observability dashboards |
 
 ## Local Demo Screenshots
 
@@ -155,6 +156,7 @@ Restart the backend after changing environment variables. Invalid, unavailable, 
 | Phase 4 | PyG/notebook export and in-app baseline experiment runner |
 | Phase 5/6 slice | Basic auth, saved projects, share links, API keys, and public API surface |
 | Sprint 1 | Docker Compose, GitHub Actions CI, demo dataset picker, project progress timeline |
+| Sprint 2 | Request IDs/timing headers, security headers, configurable in-memory rate limit |
 
 ## Project Completion Estimate
 

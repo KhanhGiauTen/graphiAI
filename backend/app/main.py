@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import init_db
+from app.middleware import OperationalHeadersMiddleware, RateLimitMiddleware
 from app.routers import (
     ai_schema,
     api_keys,
@@ -44,6 +45,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(OperationalHeadersMiddleware)
+app.add_middleware(RateLimitMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
