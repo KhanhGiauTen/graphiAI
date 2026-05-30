@@ -104,6 +104,9 @@ export interface ProjectRead {
   file_size_bytes?: number | null
   status: string
   selected_schema_id?: string | null
+  user_id?: string | null
+  visibility: string
+  share_token?: string | null
   created_at: string
   updated_at: string
 }
