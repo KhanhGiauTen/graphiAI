@@ -47,6 +47,46 @@ class Settings(BaseSettings):
     def rate_limit_exempt_paths(self) -> list[str]:
         return _split_csv(self.RATE_LIMIT_EXEMPT_PATHS)
 
+    @property
+    def is_production(self) -> bool:
+        return self.ENVIRONMENT.lower() in {"production", "prod"}
+
+    @property
+    def database_backend(self) -> str:
+        return self.DATABASE_URL.split(":", 1)[0]
+
+    def runtime_warnings(self) -> list[str]:
+        warnings: list[str] = []
+        if self.SECRET_KEY == "change-this-in-production":
+            warnings.append("SECRET_KEY is using the development default.")
+        if self.AI_SCHEMA_MODE == "llm" and not self.OPENAI_API_KEY:
+            warnings.append("AI_SCHEMA_MODE is llm but OPENAI_API_KEY is not configured.")
+        if "*" in self.allowed_origins:
+            warnings.append("ALLOWED_ORIGINS includes a wildcard origin.")
+        if not self.RATE_LIMIT_ENABLED:
+            warnings.append("RATE_LIMIT_ENABLED is disabled.")
+        if self.is_production and self.database_backend == "sqlite":
+            warnings.append("Production environment is using SQLite metadata storage.")
+        return warnings
+
+    def runtime_errors(self) -> list[str]:
+        if not self.is_production:
+            return []
+
+        errors: list[str] = []
+        if self.SECRET_KEY == "change-this-in-production":
+            errors.append("Set a non-default SECRET_KEY before running in production.")
+        if not self.RATE_LIMIT_ENABLED:
+            errors.append("Enable RATE_LIMIT_ENABLED before running in production.")
+        if "*" in self.allowed_origins:
+            errors.append("Remove wildcard ALLOWED_ORIGINS before running in production.")
+        return errors
+
+    def assert_runtime_ready(self) -> None:
+        errors = self.runtime_errors()
+        if errors:
+            raise RuntimeError("Invalid runtime configuration: " + " ".join(errors))
+
 
 def _split_csv(value: str) -> list[str]:
     return [item.strip() for item in value.split(",") if item.strip()]

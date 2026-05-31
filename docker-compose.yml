@@ -24,7 +24,7 @@ services:
       RATE_LIMIT_ENABLED: "true"
       RATE_LIMIT_REQUESTS: 600
       RATE_LIMIT_WINDOW_SECONDS: 60
-      RATE_LIMIT_EXEMPT_PATHS: /health,/api/v1/health,/docs,/redoc,/openapi.json
+      RATE_LIMIT_EXEMPT_PATHS: /health,/api/v1/health,/system/status,/api/v1/system/status,/docs,/redoc,/openapi.json
     ports:
       - "8000:8000"
     volumes:

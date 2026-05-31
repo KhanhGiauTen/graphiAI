@@ -49,6 +49,10 @@ def get_project_report(
 ) -> ProjectReport:
     project = get_project_or_404(db, project_id)
     _ensure_project_access(project, current_user)
+    return project_report(project, schema_id)
+
+
+def project_report(project: Project, schema_id: str | None = None) -> ProjectReport:
     profile = parse_profile(project)
     if profile is None:
         raise HTTPException(status_code=400, detail="Project must be profiled before generating a report")
@@ -82,7 +86,7 @@ def get_project_report(
 @router.post("/{project_id}/share", response_model=ProjectDetail)
 def share_project(
     project_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User | None = Depends(get_optional_user),
     db: Session = Depends(get_db),
 ) -> ProjectDetail:
     project = get_project_or_404(db, project_id)
@@ -98,7 +102,7 @@ def share_project(
 @router.delete("/{project_id}/share", response_model=ProjectDetail)
 def revoke_project_share(
     project_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User | None = Depends(get_optional_user),
     db: Session = Depends(get_db),
 ) -> ProjectDetail:
     project = get_project_or_404(db, project_id)
@@ -128,9 +132,12 @@ def _ensure_project_access(project: Project, current_user: User | None) -> None:
     raise HTTPException(status_code=403, detail="You do not have access to this project")
 
 
-def _ensure_project_owner(project: Project, current_user: User) -> None:
-    if project.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="You do not own this project")
+def _ensure_project_owner(project: Project, current_user: User | None) -> None:
+    if project.user_id is None:
+        return
+    if current_user and project.user_id == current_user.id:
+        return
+    raise HTTPException(status_code=403, detail="You do not own this project")
 
 
 def _report_recommendations(quality: GraphQualityReport) -> list[str]:

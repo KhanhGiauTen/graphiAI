@@ -35,10 +35,10 @@ The core local demo now covers the Phase 1-4 story: choose a demo dataset or upl
 | Export bundle | Implemented: schema, nodes, edges, labels, NetworkX, PyG helper, notebook |
 | Baseline experiment runner | Implemented: degree/feature threshold baseline with fallback ranking |
 | Demo readiness | Implemented: built-in demo dataset picker and project progress timeline |
-| CI and Docker Compose | Implemented: backend tests, frontend checks, and local full-stack compose |
-| Operational hardening | Implemented: request IDs, request timing, security headers, configurable rate limit |
+| CI and Docker Compose | Implemented: backend tests, API smoke test, frontend checks, and local full-stack compose |
+| Operational hardening | Implemented: request IDs, request timing, security headers, configurable rate limit, system status |
 | Product accounts/sharing/API keys | Basic implementation |
-| Production hardening | Still pending: hosted deployment, stronger auth policy, persistent rate-limit storage, observability dashboards |
+| Production hardening | Still pending: hosted deployment, persistent rate-limit storage, observability dashboards |
 
 ## Local Demo Screenshots
 
@@ -144,7 +144,18 @@ Restart the backend after changing environment variables. Invalid, unavailable, 
 |---------|-----|
 | Frontend app | `http://127.0.0.1:3000` |
 | Backend health | `http://127.0.0.1:8000/health` |
+| Runtime status | `http://127.0.0.1:8000/api/v1/system/status` |
 | API docs | `http://127.0.0.1:8000/docs` |
+
+## Local Verification
+
+After starting the backend, run the smoke test:
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\smoke_test.py --api-url http://127.0.0.1:8000/api/v1
+```
+
+The smoke test creates a demo fraud project, verifies schema recommendation, project report, graph preview, baseline experiment, and export generation.
 
 ## Implementation Timeline
 
@@ -159,14 +170,15 @@ Restart the backend after changing environment variables. Invalid, unavailable, 
 | Sprint 1 | Docker Compose, GitHub Actions CI, demo dataset picker, project progress timeline |
 | Sprint 2 | Request IDs/timing headers, security headers, configurable in-memory rate limit |
 | Sprint 3 | Project schema report, quality score dashboard, recommendations, JSON report download |
+| Completion pass | Runtime status endpoint, shared report UX, API smoke test, CI smoke coverage |
 
 ## Project Completion Estimate
 
 | Scope | Estimate |
 |-------|----------|
-| Local portfolio demo | 96% |
-| Practical prototype | 78% |
-| Production SaaS | 42% |
+| Local portfolio demo | 98% |
+| Practical prototype | 82% |
+| Production SaaS | 45% |
 
 The prototype is strong enough to demonstrate the product thesis locally. Production work remains around deployment, CI/CD, access control, rate limits, observability, and more serious graph ML experiment infrastructure.
 

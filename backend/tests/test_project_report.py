@@ -32,3 +32,19 @@ def test_project_report_requires_existing_schema() -> None:
         )
 
     assert report_response.status_code == 404
+
+
+def test_shared_project_report_uses_share_token() -> None:
+    with TestClient(app) as client:
+        demo_response = client.post("/api/v1/demo-datasets/fraud_transactions/project")
+        project_id = demo_response.json()["project_id"]
+        share_response = client.post(f"/api/v1/projects/{project_id}/share")
+        share_token = share_response.json()["share_token"]
+
+        report_response = client.get(f"/api/v1/share/{share_token}/report")
+
+    assert report_response.status_code == 200
+    report = report_response.json()
+    assert report["project_id"] == project_id
+    assert report["schema_name"] == "Transaction-Centered Graph"
+    assert report["quality"]["final_score"] > 0

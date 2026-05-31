@@ -15,3 +15,10 @@ Health checks:
 
 - `GET http://localhost:8000/health`
 - `GET http://localhost:8000/api/v1/health`
+- `GET http://localhost:8000/api/v1/system/status`
+
+Smoke test:
+
+```bash
+python ../scripts/smoke_test.py --api-url http://127.0.0.1:8000/api/v1
+```

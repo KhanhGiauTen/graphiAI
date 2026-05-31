@@ -63,3 +63,17 @@ def test_settings_parse_comma_separated_runtime_lists() -> None:
 
     assert settings.allowed_origins == ["http://localhost:3000", "http://127.0.0.1:3000"]
     assert settings.rate_limit_exempt_paths == ["/health", "/docs", "/openapi.json"]
+
+
+def test_production_runtime_errors_reject_unsafe_defaults() -> None:
+    settings = Settings(
+        ENVIRONMENT="production",
+        SECRET_KEY="change-this-in-production",
+        RATE_LIMIT_ENABLED=False,
+        ALLOWED_ORIGINS="*",
+    )
+
+    errors = settings.runtime_errors()
+    assert any("SECRET_KEY" in error for error in errors)
+    assert any("RATE_LIMIT_ENABLED" in error for error in errors)
+    assert any("ALLOWED_ORIGINS" in error for error in errors)

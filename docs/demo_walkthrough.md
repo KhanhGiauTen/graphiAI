@@ -28,8 +28,9 @@ Upload CSV
 | Interactive graph preview | Done | SVG graph with type filters, relation filters, search, selected node details, and neighbor focus |
 | Export bundle | Done | `schema.json`, graph tables, NetworkX builder, PyG helper, and notebook |
 | Baseline runner | Done | Local degree/feature threshold classifier with fallback degree ranking |
-| Product shell | Partial | Login, projects, share links, API keys exist, but production hardening is pending |
-| Production deployment | Pending | CI/CD, hosting, observability, stricter auth/rate limits are future work |
+| Product shell | Done for local prototype | Login, projects, share links, shared reports, API keys, and demo dataset picker |
+| Operational hardening | Done for local prototype | CI, Docker Compose config, request headers, rate limit, runtime status, and smoke test |
+| Production deployment | Pending | Hosting, persistent rate-limit storage, and observability dashboards are future work |
 
 ## Screenshots
 
@@ -90,6 +91,14 @@ backend/tests/fixtures/student_courses.csv
 - Build Preview.
 - Run Baseline.
 - Create ZIP and download the export bundle.
+- Review the quality panel and download the schema report JSON.
+
+6. Run the API smoke test:
+
+```powershell
+cd "C:\Users\Acer\source\repos\My Projects\GraphiAI"
+.\.venv\Scripts\python.exe .\scripts\smoke_test.py --api-url http://127.0.0.1:8000/api/v1
+```
 
 ## Optional LLM Mode
 
@@ -108,8 +117,8 @@ Restart the backend after changing environment variables.
 
 This project is now strong enough for a local portfolio demo. It is not yet a production SaaS. The next most valuable steps are:
 
-1. Add CI/CD with backend tests and frontend build.
-2. Add Docker Compose for one-command local startup.
-3. Deploy a demo build.
-4. Replace the lightweight threshold baseline with true Node2Vec/GraphSAGE experiments.
-5. Add production-grade rate limiting, auth policy, storage, and observability.
+1. Deploy a hosted demo build.
+2. Replace the lightweight threshold baseline with true Node2Vec/GraphSAGE experiments.
+3. Move rate limiting and job state from process memory to Redis/PostgreSQL.
+4. Add observability dashboards and structured metrics.
+5. Add larger benchmark datasets for report-quality validation.

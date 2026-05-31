@@ -28,6 +28,7 @@ from app.routers import (
 
 
 def prepare_runtime() -> None:
+    settings.assert_runtime_ready()
     Path(settings.UPLOAD_DIR).mkdir(parents=True, exist_ok=True)
     Path(settings.EXPORT_DIR).mkdir(parents=True, exist_ok=True)
     init_db()
