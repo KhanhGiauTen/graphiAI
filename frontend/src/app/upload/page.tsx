@@ -2,10 +2,21 @@
 
 import { FormEvent, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import {
+  ArrowRight,
+  CheckCircle2,
+  DatabaseZap,
+  FileSpreadsheet,
+  Loader2,
+  ShieldAlert,
+  UploadCloud,
+} from "lucide-react"
 
+import { AppHeader } from "@/components/AppHeader"
 import { api } from "@/lib/api"
 import type { DemoDataset, DemoDatasetCreateResponse, UploadResponse } from "@/types"
 
+const uploadSteps = ["Uploading", "Profiling", "Generating schemas"]
 
 export default function UploadPage() {
   const router = useRouter()
@@ -30,16 +41,16 @@ export default function UploadPage() {
     }
 
     setError("")
-    setStatus("Uploading dataset...")
+    setStatus("Uploading")
     const formData = new FormData()
     formData.append("file", file)
 
     try {
       const upload = await api.post<UploadResponse>("/upload", formData)
       const projectId = upload.data.project_id
-      setStatus("Profiling columns...")
+      setStatus("Profiling")
       await api.post(`/profile/${projectId}`)
-      setStatus("Generating graph schemas...")
+      setStatus("Generating schemas")
       await api.post(`/schema/recommend/${projectId}`)
       router.push(`/projects/${projectId}`)
     } catch (err) {
@@ -50,82 +61,159 @@ export default function UploadPage() {
 
   async function startDemo(dataset: DemoDataset) {
     setError("")
-    setDemoStatus(`Preparing ${dataset.name}...`)
+    setDemoStatus(`Preparing ${dataset.name}`)
     try {
       const response = await api.post<DemoDatasetCreateResponse>(`/demo-datasets/${dataset.id}/project`)
-      router.push(`/projects/${response.data.project_id}`)
+      router.push(`/projects/${response.data.project_id}?demo=1`)
     } catch (err) {
       setDemoStatus("")
       setError(err instanceof Error ? err.message : "Demo dataset failed.")
     }
   }
 
-  return (
-    <main className="min-h-screen bg-panel px-6 py-8 text-ink">
-      <div className="mx-auto max-w-3xl">
-        <a className="text-sm font-medium text-graph-blue" href="/">
-          Back
-        </a>
-        <h1 className="mt-6 text-3xl font-semibold">Upload Dataset</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-600">
-          Upload a CSV to profile columns and create initial rule-based graph schemas. You can run AI schema
-          analysis, interactive preview, export, and baseline evaluation on the project page.
-        </p>
+  const working = Boolean(status || demoStatus)
 
-        <div className="mt-8 grid gap-5">
-          {demos.length ? (
-            <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+  return (
+    <main className="app-shell text-ink">
+      <AppHeader />
+      <div className="mx-auto grid max-w-7xl gap-6 px-6 pb-10">
+        <section className="grid gap-5 border-t border-border-soft pt-8 lg:grid-cols-[0.82fr_1.18fr]">
+          <div className="soft-card p-6">
+            <span className="pill border-cyan-100 bg-cyan-50 text-graph-cyan">
+              <UploadCloud className="h-3.5 w-3.5" aria-hidden="true" />
+              Dataset intake
+            </span>
+            <h1 className="mt-4 text-3xl font-bold md:text-4xl">Create a graph project</h1>
+            <p className="mt-3 text-sm leading-7 text-muted">
+              Start with a built-in dataset or upload a CSV. Graphify AI will profile columns, recommend
+              graph schemas, and open a dashboard for quality checks, preview, baseline, and export.
+            </p>
+            <div className="mt-6 grid gap-3">
+              {uploadSteps.map((step) => {
+                const active = status === step
+                const done = status && uploadSteps.indexOf(status) > uploadSteps.indexOf(step)
+                return (
+                  <div className="flex items-center gap-3 rounded-card border border-border-soft bg-surface-muted px-4 py-3" key={step}>
+                    <span
+                      className={`grid h-8 w-8 place-items-center rounded-full ${
+                        active ? "bg-cyan-100 text-graph-cyan" : done ? "bg-emerald-100 text-graph-green" : "bg-white text-muted"
+                      }`}
+                    >
+                      {active ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <CheckCircle2 className="h-4 w-4" aria-hidden="true" />}
+                    </span>
+                    <span className="text-sm font-bold text-ink">{step}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="grid gap-5">
+            <section className="soft-card p-6">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
-                  <p className="text-sm font-medium text-slate-500">Demo datasets</p>
-                  <h2 className="mt-1 text-xl font-semibold">Start from a prepared example</h2>
+                  <p className="text-sm font-bold uppercase tracking-wide text-graph-cyan">Demo datasets</p>
+                  <h2 className="mt-1 text-2xl font-bold">Fastest path to a working graph</h2>
                 </div>
-                {demoStatus ? <p className="text-sm text-slate-600">{demoStatus}</p> : null}
+                {demoStatus ? (
+                  <span className="pill border-cyan-100 bg-cyan-50 text-graph-cyan">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                    {demoStatus}
+                  </span>
+                ) : null}
               </div>
-              <div className="mt-5 grid gap-3 md:grid-cols-3">
-                {demos.map((dataset) => (
-                  <button
-                    className="rounded-md border border-slate-200 p-4 text-left text-sm transition hover:border-graph-blue hover:bg-blue-50 disabled:opacity-50"
-                    disabled={Boolean(status || demoStatus)}
-                    key={dataset.id}
-                    onClick={() => startDemo(dataset)}
-                    type="button"
-                  >
-                    <span className="block font-semibold text-slate-900">{dataset.name}</span>
-                    <span className="mt-2 block text-xs font-medium uppercase text-slate-500">
-                      {dataset.domain}
-                    </span>
-                    <span className="mt-3 block leading-6 text-slate-600">{dataset.description}</span>
-                    <span className="mt-3 block font-medium text-graph-blue">{dataset.suggested_task}</span>
-                  </button>
-                ))}
+
+              <div className="mt-5 grid gap-3 lg:grid-cols-3">
+                {demos.length ? (
+                  demos.map((dataset) => (
+                    <button
+                      className="group min-h-56 rounded-card border border-border-soft bg-white p-4 text-left shadow-line hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-soft disabled:translate-y-0 disabled:opacity-50"
+                      disabled={working}
+                      key={dataset.id}
+                      onClick={() => startDemo(dataset)}
+                      type="button"
+                    >
+                      <span className="flex items-start justify-between gap-3">
+                        <span className="grid h-10 w-10 place-items-center rounded-card bg-cyan-50 text-graph-cyan">
+                          <DatabaseZap className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                        <span className="pill bg-surface-muted">{dataset.rows.toLocaleString()} rows</span>
+                      </span>
+                      <span className="mt-4 block text-base font-bold text-ink">{dataset.name}</span>
+                      <span className="mt-3 flex flex-wrap gap-2">
+                        <span className="pill border-indigo-100 bg-indigo-50 text-accent-indigo">{dataset.domain}</span>
+                        <span className="pill border-emerald-100 bg-emerald-50 text-graph-green">{dataset.suggested_task}</span>
+                      </span>
+                      <span className="mt-4 block text-sm leading-6 text-muted">{dataset.description}</span>
+                      <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-graph-cyan">
+                        Open demo <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
+                      </span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="col-span-full rounded-card border border-border-soft bg-surface-muted p-5 text-sm text-muted">
+                    Demo catalog is not available. You can still upload a CSV below.
+                  </div>
+                )}
               </div>
             </section>
-          ) : null}
 
-          <form className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm" onSubmit={handleSubmit}>
-            <label className="block text-sm font-medium text-slate-700" htmlFor="dataset">
-              CSV file
-            </label>
-            <input
-              accept=".csv"
-              className="mt-3 block w-full rounded-md border border-slate-300 p-3 text-sm"
-              id="dataset"
-              onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-              type="file"
-            />
-            <button
-              className="mt-5 rounded-md bg-graph-blue px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-              disabled={!file || Boolean(status || demoStatus)}
-              type="submit"
-            >
-              Upload and Analyze
-            </button>
-            {status ? <p className="mt-4 text-sm text-slate-600">{status}</p> : null}
-            {error ? <p className="mt-4 text-sm text-rose-700">{error}</p> : null}
-          </form>
-        </div>
+            <form className="soft-card p-6" onSubmit={handleSubmit}>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-wide text-graph-cyan">Custom CSV</p>
+                  <h2 className="mt-1 text-2xl font-bold">Upload your own table</h2>
+                </div>
+                {file ? <span className="pill bg-emerald-50 text-graph-green">{formatBytes(file.size)}</span> : null}
+              </div>
+              <label
+                className="mt-5 flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-card border border-dashed border-cyan-200 bg-cyan-50/45 px-4 py-6 text-center hover:bg-cyan-50"
+                htmlFor="dataset"
+              >
+                <FileSpreadsheet className="h-9 w-9 text-graph-cyan" aria-hidden="true" />
+                <span className="mt-3 text-sm font-bold text-ink">{file ? file.name : "Choose a CSV file"}</span>
+                <span className="mt-1 text-xs font-semibold text-muted">Comma-separated tables up to your local backend limit</span>
+              </label>
+              <input
+                accept=".csv"
+                className="sr-only"
+                id="dataset"
+                onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+                type="file"
+              />
+              <button className="btn-primary mt-5" disabled={!file || working} type="submit">
+                {status ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    {status}
+                  </>
+                ) : (
+                  <>
+                    Analyze CSV
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </>
+                )}
+              </button>
+              {error ? (
+                <p className="mt-4 flex items-center gap-2 rounded-card border border-rose-100 bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-700">
+                  <ShieldAlert className="h-4 w-4" aria-hidden="true" />
+                  {error}
+                </p>
+              ) : null}
+            </form>
+          </div>
+        </section>
       </div>
     </main>
   )
+}
+
+function formatBytes(value: number) {
+  if (value < 1024) {
+    return `${value} B`
+  }
+  if (value < 1024 * 1024) {
+    return `${(value / 1024).toFixed(1)} KB`
+  }
+  return `${(value / (1024 * 1024)).toFixed(1)} MB`
 }

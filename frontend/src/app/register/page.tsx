@@ -2,10 +2,11 @@
 
 import { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
+import { ArrowRight, ShieldAlert, UserPlus } from "lucide-react"
 
+import { AppHeader } from "@/components/AppHeader"
 import { api } from "@/lib/api"
 import type { TokenResponse } from "@/types"
-
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -31,15 +32,47 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-panel px-6 py-8 text-ink">
-      <form className="mx-auto mt-16 max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm" onSubmit={submit}>
-        <h1 className="text-2xl font-semibold">Create account</h1>
-        <input className="mt-6 w-full rounded-md border p-3 text-sm" onChange={(event) => setFullName(event.target.value)} placeholder="Full name" value={fullName} />
-        <input className="mt-3 w-full rounded-md border p-3 text-sm" onChange={(event) => setEmail(event.target.value)} placeholder="Email" type="email" value={email} />
-        <input className="mt-3 w-full rounded-md border p-3 text-sm" onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />
-        <button className="mt-5 rounded-md bg-graph-blue px-4 py-2 text-sm font-semibold text-white" type="submit">Create account</button>
-        <a className="ml-4 text-sm font-medium text-graph-blue" href="/login">Sign in</a>
-        {error ? <p className="mt-4 text-sm text-rose-700">{error}</p> : null}
+    <main className="app-shell text-ink">
+      <AppHeader />
+      <form className="soft-card mx-auto mt-10 max-w-md p-6" onSubmit={submit}>
+        <span className="pill border-indigo-100 bg-indigo-50 text-accent-indigo">
+          <UserPlus className="h-3.5 w-3.5" aria-hidden="true" />
+          Create workspace
+        </span>
+        <h1 className="mt-4 text-2xl font-bold">Create account</h1>
+        <input
+          className="mt-6 w-full rounded-card border border-border-soft bg-white p-3 text-sm focus:border-cyan-200"
+          onChange={(event) => setFullName(event.target.value)}
+          placeholder="Full name"
+          value={fullName}
+        />
+        <input
+          className="mt-3 w-full rounded-card border border-border-soft bg-white p-3 text-sm focus:border-cyan-200"
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="Email"
+          type="email"
+          value={email}
+        />
+        <input
+          className="mt-3 w-full rounded-card border border-border-soft bg-white p-3 text-sm focus:border-cyan-200"
+          onChange={(event) => setPassword(event.target.value)}
+          placeholder="Password"
+          type="password"
+          value={password}
+        />
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <button className="btn-primary" type="submit">
+            Create account
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </button>
+          <a className="btn-ghost" href="/login">Sign in</a>
+        </div>
+        {error ? (
+          <p className="mt-4 flex items-center gap-2 rounded-card border border-rose-100 bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-700">
+            <ShieldAlert className="h-4 w-4" aria-hidden="true" />
+            {error}
+          </p>
+        ) : null}
       </form>
     </main>
   )

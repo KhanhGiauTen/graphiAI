@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
+import { Download, FileJson, GitBranch, LockKeyhole, ShieldCheck } from "lucide-react"
 
+import { AppHeader } from "@/components/AppHeader"
 import { QualityPanel } from "@/components/quality/QualityPanel"
 import { api } from "@/lib/api"
 import type { ProjectDetail, ProjectReport } from "@/types"
-
 
 export default function SharedProjectPage() {
   const routeParams = useParams<{ token: string }>()
@@ -35,7 +36,7 @@ export default function SharedProjectPage() {
     let cancelled = false
     setError("")
     setReport(null)
-    setReportStatus("Loading report...")
+    setReportStatus("Loading read-only report")
     api
       .get<ProjectReport>(`/share/${token}/report`, { params: { schema_id: selectedSchema } })
       .then((response) => {
@@ -59,59 +60,90 @@ export default function SharedProjectPage() {
     }
   }, [token, selectedSchema])
 
-  if (error) return <main className="p-8 text-rose-700">{error}</main>
-  if (!project) return <main className="p-8 text-slate-600">Loading shared project...</main>
+  if (error) return <main className="app-shell p-8 text-rose-700">{error}</main>
+  if (!project) return <main className="app-shell p-8 text-muted">Loading shared project...</main>
 
   const schema = project.graph_schemas.find((item) => item.id === selectedSchema) ?? project.graph_schemas[0]
 
   return (
-    <main className="min-h-screen bg-panel px-6 py-8 text-ink">
-      <div className="mx-auto grid max-w-6xl gap-6">
-        <p className="text-sm font-semibold uppercase text-graph-blue">Shared Graphify AI Project</p>
-        <h1 className="mt-3 text-3xl font-semibold">{project.name ?? project.original_filename}</h1>
-        <p className="text-sm text-slate-600">Read-only schema preview and quality report.</p>
+    <main className="app-shell text-ink">
+      <AppHeader />
+      <div className="mx-auto grid max-w-7xl gap-6 px-6 pb-10">
+        <section className="soft-card border-t border-border-soft p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <span className="pill border-emerald-100 bg-emerald-50 text-graph-green">
+                <LockKeyhole className="h-3.5 w-3.5" aria-hidden="true" />
+                Read-only shared report
+              </span>
+              <h1 className="mt-4 text-3xl font-bold md:text-4xl">{project.name ?? project.original_filename}</h1>
+              <p className="mt-3 max-w-3xl text-sm leading-7 text-muted">
+                Public schema preview, quality guardrails, and report download. Editing, graph building, baseline runs,
+                and export creation remain locked to the project owner.
+              </p>
+            </div>
+            {report ? (
+              <span className="pill border-cyan-100 bg-cyan-50 text-graph-cyan">
+                <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+                {report.quality.final_score.toFixed(1)}/100 quality
+              </span>
+            ) : null}
+          </div>
+        </section>
 
-        <section className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-semibold">Suggested schemas</h2>
+        <section className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
+          <div className="soft-card h-fit p-5">
+            <div className="flex items-center gap-3">
+              <span className="grid h-9 w-9 place-items-center rounded-card bg-indigo-50 text-accent-indigo">
+                <GitBranch className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <h2 className="text-lg font-bold">Suggested schemas</h2>
+            </div>
             <div className="mt-4 grid gap-3">
               {project.graph_schemas.map((item) => (
                 <button
-                  className={`rounded-md border p-3 text-left text-sm ${
-                    item.id === selectedSchema ? "border-graph-blue bg-blue-50" : "border-slate-200"
+                  className={`rounded-card border p-4 text-left text-sm shadow-line ${
+                    item.id === selectedSchema ? "border-cyan-200 bg-cyan-50" : "border-border-soft bg-white hover:border-cyan-200"
                   }`}
                   key={item.id}
                   onClick={() => setSelectedSchema(item.id)}
                   type="button"
                 >
-                  <span className="font-semibold">{item.name}</span>
-                  <span className="mt-1 block text-slate-600">Score: {item.quality_score.toFixed(1)}</span>
+                  <span className="font-bold text-ink">{item.name}</span>
+                  <span className="mt-2 block text-muted">Score: {item.quality_score.toFixed(1)}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {schema ? (
-            <article className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-sm font-medium text-slate-500">Selected schema</p>
-              <h2 className="mt-1 text-xl font-semibold">{schema.name}</h2>
-              <p className="mt-3 text-sm leading-6 text-slate-600">{schema.description}</p>
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
-                <SharedList
-                  title="Nodes"
-                  items={schema.node_types.map((node) => `${node.name} from ${node.source_column}`)}
-                />
-                <SharedList
-                  title="Edges"
-                  items={schema.edge_types.map((edge) => `${edge.source} ${edge.relation} ${edge.target}`)}
-                />
-              </div>
-            </article>
-          ) : null}
-        </section>
+          <div className="grid min-w-0 gap-6">
+            {schema ? (
+              <article className="soft-card p-5">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-bold uppercase tracking-wide text-graph-cyan">Selected schema</p>
+                    <h2 className="mt-1 text-2xl font-bold">{schema.name}</h2>
+                    <p className="mt-3 text-sm leading-7 text-muted">{schema.description}</p>
+                  </div>
+                  <span className="pill bg-surface-muted">{schema.quality_score.toFixed(1)} score</span>
+                </div>
+                <div className="mt-5 grid gap-3 md:grid-cols-2">
+                  <SharedList
+                    title="Nodes"
+                    items={schema.node_types.map((node) => `${node.name} from ${node.source_column}`)}
+                  />
+                  <SharedList
+                    title="Edges"
+                    items={schema.edge_types.map((edge) => `${edge.source} ${edge.relation} ${edge.target}`)}
+                  />
+                </div>
+              </article>
+            ) : null}
 
-        {report?.quality ? <QualityPanel report={report.quality} /> : null}
-        {report ? <SharedReport report={report} /> : reportStatus ? <LoadingBlock label={reportStatus} /> : null}
+            {report?.quality ? <QualityPanel report={report.quality} /> : null}
+            {report ? <SharedReport report={report} /> : reportStatus ? <LoadingBlock label={reportStatus} /> : null}
+          </div>
+        </section>
       </div>
     </main>
   )
@@ -119,7 +151,7 @@ export default function SharedProjectPage() {
 
 function LoadingBlock({ label }: { label: string }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 text-sm text-slate-600 shadow-sm">
+    <section className="soft-card p-5 text-sm font-semibold text-muted">
       {label}
     </section>
   )
@@ -127,11 +159,13 @@ function LoadingBlock({ label }: { label: string }) {
 
 function SharedList({ items, title }: { items: string[]; title: string }) {
   return (
-    <div>
-      <h3 className="text-sm font-semibold text-slate-700">{title}</h3>
-      <ul className="mt-2 grid gap-1 text-sm text-slate-600">
+    <div className="subtle-panel p-4">
+      <h3 className="text-sm font-bold text-ink">{title}</h3>
+      <ul className="mt-3 grid gap-2 text-sm text-muted">
         {items.map((item) => (
-          <li key={item}>{item}</li>
+          <li className="break-words" key={item}>
+            {item}
+          </li>
         ))}
       </ul>
     </div>
@@ -140,21 +174,18 @@ function SharedList({ items, title }: { items: string[]; title: string }) {
 
 function SharedReport({ report }: { report: ProjectReport }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="soft-card p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-slate-500">Read-only report</p>
-          <h2 className="mt-1 text-xl font-semibold">{report.schema_name}</h2>
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="text-sm font-bold uppercase tracking-wide text-graph-cyan">Read-only report</p>
+          <h2 className="mt-1 text-xl font-bold">{report.schema_name}</h2>
+          <p className="mt-2 text-sm text-muted">
             {report.overview.row_count.toLocaleString()} rows, {report.overview.column_count} columns,
             quality {report.quality.final_score.toFixed(1)}/100.
           </p>
         </div>
-        <button
-          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700"
-          onClick={() => downloadSharedReport(report)}
-          type="button"
-        >
+        <button className="btn-secondary" onClick={() => downloadSharedReport(report)} type="button">
+          <Download className="h-4 w-4" aria-hidden="true" />
           Download JSON
         </button>
       </div>
@@ -163,15 +194,19 @@ function SharedReport({ report }: { report: ProjectReport }) {
         <SharedReportList title="Next steps" items={report.next_steps} />
         <SharedReportList title="Suggested tasks" items={report.suggested_tasks} />
       </div>
+      <div className="mt-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted">
+        <FileJson className="h-4 w-4" aria-hidden="true" />
+        JSON export is generated from the same project report API.
+      </div>
     </section>
   )
 }
 
 function SharedReportList({ items, title }: { items: string[]; title: string }) {
   return (
-    <div className="rounded-md border border-slate-200 p-4">
-      <h3 className="text-sm font-semibold text-slate-700">{title}</h3>
-      <ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-600">
+    <div className="subtle-panel p-4">
+      <h3 className="text-sm font-bold text-ink">{title}</h3>
+      <ul className="mt-3 grid gap-2 text-sm leading-6 text-muted">
         {(items.length ? items : ["None"]).map((item) => (
           <li key={item}>{item}</li>
         ))}

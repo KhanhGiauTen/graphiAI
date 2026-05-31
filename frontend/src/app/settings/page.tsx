@@ -1,10 +1,11 @@
 "use client"
 
 import { FormEvent, useEffect, useState } from "react"
+import { KeyRound, Plus, ShieldAlert, Trash2 } from "lucide-react"
 
+import { AppHeader } from "@/components/AppHeader"
 import { api } from "@/lib/api"
 import type { ApiKeyCreateResponse, ApiKeyRead, UsageSummary } from "@/types"
-
 
 export default function SettingsPage() {
   const [name, setName] = useState("Development key")
@@ -39,45 +40,69 @@ export default function SettingsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-panel px-6 py-8 text-ink">
-      <div className="mx-auto max-w-5xl">
-        <h1 className="text-3xl font-semibold">Settings</h1>
-        <p className="mt-2 text-sm text-slate-600">Manage API keys for the public Graphify AI API.</p>
-        {error ? <p className="mt-4 text-sm text-rose-700">{error}</p> : null}
-
-        <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-semibold">Usage</h2>
-          <p className="mt-3 text-sm text-slate-600">Active keys: {usage?.active_api_keys ?? 0}</p>
-          <p className="mt-1 text-sm text-slate-600">Public API requests: {usage?.total_public_api_requests ?? 0}</p>
+    <main className="app-shell text-ink">
+      <AppHeader />
+      <div className="mx-auto grid max-w-5xl gap-6 px-6 pb-10">
+        <section className="soft-card border-t border-border-soft p-6">
+          <span className="pill border-indigo-100 bg-indigo-50 text-accent-indigo">
+            <KeyRound className="h-3.5 w-3.5" aria-hidden="true" />
+            API access
+          </span>
+          <h1 className="mt-4 text-3xl font-bold">Settings</h1>
+          <p className="mt-2 text-sm leading-7 text-muted">Manage API keys for the public Graphify AI API.</p>
+          {error ? (
+            <p className="mt-4 flex items-center gap-2 rounded-card border border-amber-100 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800">
+              <ShieldAlert className="h-4 w-4" aria-hidden="true" />
+              {error}
+            </p>
+          ) : null}
         </section>
 
-        <form className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm" onSubmit={createKey}>
-          <h2 className="text-lg font-semibold">Create API Key</h2>
-          <input className="mt-4 w-full rounded-md border p-3 text-sm" onChange={(event) => setName(event.target.value)} value={name} />
-          <button className="mt-4 rounded-md bg-graph-blue px-4 py-2 text-sm font-semibold text-white" type="submit">
+        <section className="grid gap-4 sm:grid-cols-2">
+          <div className="soft-card p-5">
+            <p className="text-sm font-semibold text-muted">Active keys</p>
+            <p className="mt-2 text-3xl font-bold text-ink">{usage?.active_api_keys ?? 0}</p>
+          </div>
+          <div className="soft-card p-5">
+            <p className="text-sm font-semibold text-muted">Public API requests</p>
+            <p className="mt-2 text-3xl font-bold text-ink">{usage?.total_public_api_requests ?? 0}</p>
+          </div>
+        </section>
+
+        <form className="soft-card p-5" onSubmit={createKey}>
+          <h2 className="text-lg font-bold">Create API Key</h2>
+          <input
+            className="mt-4 w-full rounded-card border border-border-soft bg-white p-3 text-sm focus:border-cyan-200"
+            onChange={(event) => setName(event.target.value)}
+            value={name}
+          />
+          <button className="btn-primary mt-4" type="submit">
+            <Plus className="h-4 w-4" aria-hidden="true" />
             Create key
           </button>
           {newKey ? (
-            <p className="mt-4 break-all rounded-md bg-amber-50 p-3 text-sm text-amber-900">
+            <p className="mt-4 break-all rounded-card border border-amber-100 bg-amber-50 p-3 text-sm font-semibold text-amber-900">
               Copy now: {newKey}
             </p>
           ) : null}
         </form>
 
-        <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-semibold">API Keys</h2>
-          <div className="mt-4 space-y-3">
+        <section className="soft-card p-5">
+          <h2 className="text-lg font-bold">API Keys</h2>
+          <div className="mt-4 grid gap-3">
             {apiKeys.map((key) => (
-              <div className="flex items-center justify-between gap-4 rounded-md border border-slate-200 p-3" key={key.id}>
+              <div className="flex items-center justify-between gap-4 rounded-card border border-border-soft bg-white p-3 shadow-line" key={key.id}>
                 <div>
-                  <p className="font-medium">{key.name}</p>
-                  <p className="text-sm text-slate-600">Requests: {key.request_count}</p>
+                  <p className="font-bold">{key.name}</p>
+                  <p className="text-sm text-muted">Requests: {key.request_count}</p>
                 </div>
-                <button className="rounded-md border border-rose-200 px-3 py-2 text-sm font-medium text-rose-700" onClick={() => revokeKey(key.id)} type="button">
+                <button className="btn-secondary text-rose-700" onClick={() => revokeKey(key.id)} type="button">
+                  <Trash2 className="h-4 w-4" aria-hidden="true" />
                   Revoke
                 </button>
               </div>
             ))}
+            {!apiKeys.length ? <p className="text-sm text-muted">No keys yet.</p> : null}
           </div>
         </section>
       </div>

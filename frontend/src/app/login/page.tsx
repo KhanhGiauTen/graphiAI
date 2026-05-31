@@ -2,10 +2,11 @@
 
 import { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
+import { ArrowRight, LogIn, ShieldAlert } from "lucide-react"
 
+import { AppHeader } from "@/components/AppHeader"
 import { api } from "@/lib/api"
 import type { TokenResponse } from "@/types"
-
 
 export default function LoginPage() {
   const router = useRouter()
@@ -26,14 +27,41 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-panel px-6 py-8 text-ink">
-      <form className="mx-auto mt-16 max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm" onSubmit={submit}>
-        <h1 className="text-2xl font-semibold">Sign in</h1>
-        <input className="mt-6 w-full rounded-md border p-3 text-sm" onChange={(event) => setEmail(event.target.value)} placeholder="Email" type="email" value={email} />
-        <input className="mt-3 w-full rounded-md border p-3 text-sm" onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" value={password} />
-        <button className="mt-5 rounded-md bg-graph-blue px-4 py-2 text-sm font-semibold text-white" type="submit">Sign in</button>
-        <a className="ml-4 text-sm font-medium text-graph-blue" href="/register">Create account</a>
-        {error ? <p className="mt-4 text-sm text-rose-700">{error}</p> : null}
+    <main className="app-shell text-ink">
+      <AppHeader />
+      <form className="soft-card mx-auto mt-10 max-w-md p-6" onSubmit={submit}>
+        <span className="pill border-cyan-100 bg-cyan-50 text-graph-cyan">
+          <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
+          Welcome back
+        </span>
+        <h1 className="mt-4 text-2xl font-bold">Sign in</h1>
+        <input
+          className="mt-6 w-full rounded-card border border-border-soft bg-white p-3 text-sm focus:border-cyan-200"
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="Email"
+          type="email"
+          value={email}
+        />
+        <input
+          className="mt-3 w-full rounded-card border border-border-soft bg-white p-3 text-sm focus:border-cyan-200"
+          onChange={(event) => setPassword(event.target.value)}
+          placeholder="Password"
+          type="password"
+          value={password}
+        />
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <button className="btn-primary" type="submit">
+            Sign in
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </button>
+          <a className="btn-ghost" href="/register">Create account</a>
+        </div>
+        {error ? (
+          <p className="mt-4 flex items-center gap-2 rounded-card border border-rose-100 bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-700">
+            <ShieldAlert className="h-4 w-4" aria-hidden="true" />
+            {error}
+          </p>
+        ) : null}
       </form>
     </main>
   )
