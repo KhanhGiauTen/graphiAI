@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Graphify AI - Implementation Notes</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --ink: #172033;
+      --muted: #5f6f86;
+      --border: #d9e2ec;
+      --accent: #1677c9;
+      --accent-soft: #e8f3ff;
+      --good: #16805d;
+      --warn: #a86612;
+      --shadow: 0 14px 36px rgba(23, 32, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 64px;
+    }
+
+    .page-header {
+      display: grid;
+      gap: 12px;
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .summary {
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .meta-row,
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill.accent {
+      border-color: #b9dcff;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 20px;
+      margin-top: 22px;
+      align-items: start;
+    }
+
+    .notes {
+      display: grid;
+      gap: 16px;
+    }
+
+    .note-card,
+    .side-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      box-shadow: 0 8px 22px rgba(23, 32, 51, 0.06);
+    }
+
+    .note-card {
+      overflow: hidden;
+    }
+
+    .note-header {
+      display: grid;
+      gap: 10px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, #f9fbfe 100%);
+    }
+
+    .note-title {
+      font-size: 20px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    .note-body {
+      display: grid;
+      gap: 14px;
+      padding: 20px;
+    }
+
+    .fields {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eef2f7;
+    }
+
+    .field:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .value {
+      color: var(--ink);
+      font-size: 15px;
+    }
+
+    .side {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .side-card {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .side-card h2 {
+      font-size: 16px;
+    }
+
+    ol,
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background: #eef3f8;
+      color: #24364f;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    @media (max-width: 860px) {
+      main {
+        width: min(100% - 24px, 1120px);
+        padding-top: 24px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        position: static;
+      }
+
+      .field {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="page-header">
+      <div class="meta-row">
+        <span class="pill accent">Implementation memory</span>
+        <span class="pill">Cập nhật cuối: 2026-07-02 15:08:07 +07:00</span>
+        <span class="pill">Người note: KhanhGiauTen</span>
+      </div>
+      <h1>Graphify AI Implementation Notes</h1>
+      <p class="summary">
+        Nhật ký quyết định và thay đổi của repo. Mọi card được viết bằng tiếng Việt, sắp xếp theo thời gian mới nhất trước,
+        và dùng cùng với <code>docs/ARCHITECTURE.md</code> để giữ ngữ cảnh xuyên phiên làm việc.
+      </p>
+    </header>
+
+    <div class="layout">
+      <section class="notes" aria-label="Danh sách note triển khai">
+        <article class="note-card" data-timestamp="2026-07-02T15:08:07+07:00">
+          <header class="note-header">
+            <div class="card-meta">
+              <span class="pill accent">2026-07-02 15:08:07 +07:00</span>
+              <span class="pill">Người note: KhanhGiauTen</span>
+              <span class="pill">Loại: Quy trình dài hạn</span>
+            </div>
+            <h2 class="note-title">Thiết lập luật đọc kiến trúc và ghi note xuyên phiên</h2>
+          </header>
+          <div class="note-body">
+            <div class="fields">
+              <div class="field">
+                <div class="label">Phạm vi</div>
+                <div class="value">
+                  Thêm rule project cho agent, tạo tài liệu kiến trúc sống, và khởi tạo nhật ký triển khai HTML.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Thay đổi</div>
+                <div class="value">
+                  Tạo <code>AGENTS.md</code>, <code>.github/copilot-instructions.md</code>,
+                  <code>docs/ARCHITECTURE.md</code>, và <code>docs/implement-notes.html</code>.
+                  Rule yêu cầu mọi phiên đọc architecture + notes trước khi làm việc, và mọi thay đổi chạm mã nguồn/cấu hình/workflow
+                  phải được ghi lại bằng card tiếng Việt mới nhất ở trên cùng.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Lý do</div>
+                <div class="value">
+                  Dự án phục vụ nghiên cứu dài hạn nên cần bộ nhớ bền vững để agent không phải quét toàn bộ repo mỗi phiên,
+                  đồng thời lưu lại bối cảnh quyết định khi refactor hoặc mở rộng hệ thống.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Tác động</div>
+                <div class="value">
+                  Các phiên sau có quy trình bắt đầu rõ ràng, tài liệu kiến trúc làm nguồn tham chiếu nhanh,
+                  và lịch sử thay đổi có timestamp/người note để hỗ trợ review, merge, và truy vết hiệu quả quyết định.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Kiểm chứng</div>
+                <div class="value">
+                  Kiểm tra nội dung tài liệu và trạng thái git. Đây là thay đổi tài liệu/rule, không yêu cầu chạy test backend/frontend.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Review sau</div>
+                <div class="value">
+                  Sau vài phiên làm việc, đánh giá xem note card có đủ thông tin để phục dựng quyết định không; nếu thiếu,
+                  cập nhật template card trong file này và rule tương ứng.
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <aside class="side" aria-label="Quy tắc ghi note">
+        <section class="side-card">
+          <h2>Quy tắc cập nhật</h2>
+          <ol>
+            <li>Thêm card mới ngay dưới phần <code>&lt;section class="notes"&gt;</code>.</li>
+            <li>Giữ timestamp ISO trong <code>data-timestamp</code> và timestamp đọc được trong header card.</li>
+            <li>Luôn dùng tiếng Việt cho nội dung note.</li>
+            <li>Cập nhật header trang nếu card mới là note mới nhất.</li>
+          </ol>
+        </section>
+
+        <section class="side-card">
+          <h2>Khi merge conflict</h2>
+          <ul>
+            <li>Không xóa card hợp lệ từ nhánh khác.</li>
+            <li>Sắp xếp card theo thời gian mới nhất trước.</li>
+            <li>Nếu có note trùng chủ đề, đánh giá hiệu quả thực tế rồi mới hợp nhất nội dung.</li>
+            <li>Ghi thêm card giải thích phương án resolve nếu conflict ảnh hưởng quyết định kỹ thuật.</li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
