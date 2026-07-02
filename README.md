@@ -161,6 +161,10 @@ Restart the backend after changing environment variables. Invalid, unavailable, 
 | Runtime status | `http://127.0.0.1:8000/api/v1/system/status` |
 | API docs | `http://127.0.0.1:8000/docs` |
 
+## Deployment
+
+The public deployment target is Vercel for the Next.js frontend and Render for the FastAPI backend, with Render Postgres and a persistent disk for uploads/exports. See [docs/deployment.md](docs/deployment.md) for the Render Blueprint, Vercel setup, GitHub Secrets, CI/CD deploy workflow, Docker simulation, and post-deploy smoke/backtest checklist.
+
 ## Local Verification
 
 After starting the backend, run the smoke test:
