@@ -44,6 +44,14 @@ class Settings(BaseSettings):
         return _split_csv(self.ALLOWED_ORIGINS)
 
     @property
+    def sqlalchemy_database_url(self) -> str:
+        if self.DATABASE_URL.startswith("postgres://"):
+            return self.DATABASE_URL.replace("postgres://", "postgresql+psycopg2://", 1)
+        if self.DATABASE_URL.startswith("postgresql://"):
+            return self.DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
+        return self.DATABASE_URL
+
+    @property
     def rate_limit_exempt_paths(self) -> list[str]:
         return _split_csv(self.RATE_LIMIT_EXEMPT_PATHS)
 
@@ -53,7 +61,7 @@ class Settings(BaseSettings):
 
     @property
     def database_backend(self) -> str:
-        return self.DATABASE_URL.split(":", 1)[0]
+        return self.sqlalchemy_database_url.split(":", 1)[0].split("+", 1)[0]
 
     def runtime_warnings(self) -> list[str]:
         warnings: list[str] = []
@@ -67,6 +75,8 @@ class Settings(BaseSettings):
             warnings.append("RATE_LIMIT_ENABLED is disabled.")
         if self.is_production and self.database_backend == "sqlite":
             warnings.append("Production environment is using SQLite metadata storage.")
+        if self.is_production and any(_is_local_origin(origin) for origin in self.allowed_origins):
+            warnings.append("Production ALLOWED_ORIGINS includes a local development origin.")
         return warnings
 
     def runtime_errors(self) -> list[str]:
@@ -80,6 +90,8 @@ class Settings(BaseSettings):
             errors.append("Enable RATE_LIMIT_ENABLED before running in production.")
         if "*" in self.allowed_origins:
             errors.append("Remove wildcard ALLOWED_ORIGINS before running in production.")
+        if any(_is_local_origin(origin) for origin in self.allowed_origins):
+            errors.append("Set ALLOWED_ORIGINS to the deployed frontend URL before running in production.")
         return errors
 
     def assert_runtime_ready(self) -> None:
@@ -90,6 +102,10 @@ class Settings(BaseSettings):
 
 def _split_csv(value: str) -> list[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def _is_local_origin(origin: str) -> bool:
+    return origin.startswith(("http://localhost", "https://localhost", "http://127.0.0.1", "https://127.0.0.1"))
 
 
 @lru_cache

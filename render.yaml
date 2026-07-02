@@ -1,0 +1,65 @@
+services:
+  - type: web
+    name: graphiai-api
+    runtime: docker
+    plan: starter
+    region: singapore
+    branch: main
+    autoDeployTrigger: off
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /health
+    disk:
+      name: graphiai-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: APP_NAME
+        value: Graphify AI
+      - key: APP_VERSION
+        value: 0.1.0
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: graphiai-db
+          property: connectionString
+      - key: UPLOAD_DIR
+        value: /var/data/uploads
+      - key: EXPORT_DIR
+        value: /var/data/exports
+      - key: MAX_UPLOAD_SIZE_MB
+        value: "50"
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: AI_SCHEMA_MODE
+        value: heuristic
+      - key: OPENAI_BASE_URL
+        value: https://api.openai.com/v1
+      - key: LLM_MODEL
+        value: local-heuristic
+      - key: LLM_TIMEOUT_SECONDS
+        value: "20"
+      - key: LLM_MAX_RETRIES
+        value: "2"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ACCESS_TOKEN_EXPIRE_SECONDS
+        value: "604800"
+      - key: REQUEST_LOGGING_ENABLED
+        value: "true"
+      - key: SECURITY_HEADERS_ENABLED
+        value: "true"
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+      - key: RATE_LIMIT_REQUESTS
+        value: "600"
+      - key: RATE_LIMIT_WINDOW_SECONDS
+        value: "60"
+      - key: RATE_LIMIT_EXEMPT_PATHS
+        value: /health,/api/v1/health,/system/status,/api/v1/system/status,/docs,/redoc,/openapi.json
+
+databases:
+  - name: graphiai-db
+    plan: free
+    region: singapore

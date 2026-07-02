@@ -6,10 +6,10 @@ from sqlalchemy.orm import Session, declarative_base, sessionmaker
 from app.config import settings
 
 
-connect_args = {"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
+connect_args = {"check_same_thread": False} if settings.database_backend == "sqlite" else {}
 
 engine = create_engine(
-    settings.DATABASE_URL,
+    settings.sqlalchemy_database_url,
     connect_args=connect_args,
     future=True,
 )
@@ -40,7 +40,7 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def _migrate_sqlite_project_columns() -> None:
-    if not settings.DATABASE_URL.startswith("sqlite"):
+    if settings.database_backend != "sqlite":
         return
 
     columns = {
