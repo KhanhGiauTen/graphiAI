@@ -16,6 +16,7 @@ Graphify AI giúp người dùng biến dữ liệu bảng như CSV giao dịch,
 | Storage local | SQLite metadata, local uploads/exports |
 | Deployment target | Vercel frontend + Render backend + Render Postgres + persistent disk |
 | CI/CD | GitHub Actions CI and production deploy workflow prepared |
+| Hosted demo | Not deployed yet; the supported evaluation path is local |
 
 ## Product Pitch
 
@@ -28,6 +29,8 @@ Most business and research datasets start as tables. Before using graph analytic
 - Whether there are leakage, sparsity, imbalance, or scalability risks.
 
 Graphify AI acts as an AI Graph Engineer for this conversion step. It does not only draw a graph from CSV. It explains the schema choice, scores graph suitability, warns about risk, previews graph structure, and exports starter code.
+
+> **Availability:** This repository does not have a public Vercel/Render deployment yet. The application is ready to run locally, and the deployment configuration is included for a later hosted release.
 
 ## Demo Screenshots
 
@@ -173,34 +176,100 @@ Storage boundaries:
 | Graph/quality/experiment/export | `POST /api/v1/graph/build/{project_id}`, `GET /api/v1/quality/{project_id}`, `POST /api/v1/experiments/baseline/{project_id}`, `POST /api/v1/export/{project_id}` |
 | Product shell | Auth, API keys, shared read-only reports, public API surface |
 
-## Local Setup
+## Run Locally
 
-Backend:
+### Prerequisites
+
+- Git
+- Python 3.11 or newer (the repository is verified with Python 3.12)
+- Node.js 20 or newer and npm
+- Docker Desktop, only when using the optional container workflow
+
+Check the installed versions before continuing:
+
+```powershell
+git --version
+python --version
+node --version
+npm --version
+```
+
+### First-Time Setup (Windows PowerShell)
+
+Clone the repository and create an isolated Python environment from the repository root:
+
+```powershell
+git clone https://github.com/KhanhGiauTen/graphiAI.git
+cd graphiAI
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r .\backend\requirements.txt
+```
+
+Create local configuration files from the safe templates. The backend runs fully in deterministic heuristic mode; no LLM key is required for the normal demo flow.
+
+```powershell
+Copy-Item .\backend\.env.example .\backend\.env
+Copy-Item .\frontend\.env.local.example .\frontend\.env.local
+Set-Location .\frontend
+npm ci
+Set-Location ..
+```
+
+The copied files are intentionally ignored by Git. Do not put any real credential in an example file.
+
+### Start the Backend
+
+Open the first PowerShell terminal at the repository root:
 
 ```powershell
 cd backend
-..\.venv\Scripts\python.exe -m pip install -r requirements.txt
-..\.venv\Scripts\python.exe -m pytest
 ..\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-Frontend:
+The first startup creates the local SQLite database, upload directory, and export directory automatically. Keep this terminal running.
+
+### Start the Frontend
+
+Open a second PowerShell terminal at the repository root:
 
 ```powershell
-$env:PATH = "$PWD\.tools\node-v20.12.2-win-x64;$env:PATH"
 cd frontend
-npm install
-npm run typecheck
 npm run dev -- --hostname 127.0.0.1 --port 3000
 ```
 
-Full stack with Docker Compose:
+Open `http://127.0.0.1:3000`, select **Start demo**, then choose **Fraud Transactions** for the shortest complete product walkthrough.
+
+### Verify the Local Stack
+
+With the backend still running, open a third terminal at the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\smoke_test.py --api-url http://127.0.0.1:8000/api/v1
+```
+
+Run the full automated checks when changing code:
+
+```powershell
+cd backend
+..\.venv\Scripts\python.exe -m pytest -q
+cd ..\frontend
+npm run typecheck
+npm run build
+npm audit --audit-level=moderate
+```
+
+### Run With Docker Compose (Optional)
+
+Docker Compose starts the frontend, backend, and a persistent local Docker volume. It uses heuristic AI mode by default and does not require a cloud account.
 
 ```powershell
 docker compose up --build
 ```
 
-Main local URLs:
+Stop containers with `Ctrl+C`. To remove the local Docker volume as well, use `docker compose down -v`; this deletes only the Compose-managed database, uploads, and exports.
+
+### Local URLs
 
 | Surface | URL |
 |---------|-----|
@@ -208,6 +277,16 @@ Main local URLs:
 | Backend health | `http://127.0.0.1:8000/health` |
 | Runtime status | `http://127.0.0.1:8000/api/v1/system/status` |
 | API docs | `http://127.0.0.1:8000/docs` |
+
+### Common Local Issues
+
+| Symptom | Resolution |
+|---------|------------|
+| `python` is not recognized | Install Python 3.11+ and restart PowerShell, or use the Python launcher: `py -3.12 -m venv .venv`. |
+| Frontend cannot call the API | Confirm the backend health URL responds, then check `frontend/.env.local` contains `NEXT_PUBLIC_API_URL=http://127.0.0.1:8000/api/v1`; restart `npm run dev` after changing it. |
+| Browser shows a CORS error | Keep the frontend on port 3000 or add its exact origin to `backend/.env` `ALLOWED_ORIGINS`, then restart the backend. |
+| Port 3000 or 8000 is busy | Stop the old process, or change both the frontend API URL and backend CORS origin to matching replacement ports. |
+| Docker daemon is unavailable | Start Docker Desktop, or use the two-terminal native workflow above. |
 
 ## Environment Variables
 
@@ -246,6 +325,20 @@ LLM_MODEL=gpt-4.1-mini
 ```
 
 Invalid, unavailable, or malformed LLM output falls back to the deterministic heuristic path.
+
+## Public Repository Safety
+
+The repository is designed to be shareable as a portfolio project. The committed environment files contain placeholders only, runtime folders are ignored, and the bundled datasets use synthetic identifiers such as `U001`, `M001`, and `S001` rather than real customer data.
+
+Before changing a repository from private to public, verify the following:
+
+- Do not stage `.env`, `.env.local`, `.env.production`, database files, uploaded CSV files, generated exports, or cloud service credentials. The `.gitignore` protects these common local files, but `git status` is the final check.
+- Treat every `NEXT_PUBLIC_*` variable as public. Next.js embeds it in the browser bundle; only put a public API base URL there, never an API key, token, database URL, or `SECRET_KEY`.
+- Keep `OPENAI_API_KEY`, `SECRET_KEY`, deployment hooks, Vercel tokens, and database passwords in local environment files, hosting dashboards, or GitHub Actions Secrets only.
+- If a credential is ever committed, revoke or rotate it immediately. Removing the file in a later commit does not remove it from Git history.
+- Commit metadata is public too. Check `git log --format=%ae` before publishing. If it exposes a personal email address, rewrite the history before public release, then use a GitHub noreply address for future commits.
+
+The scan performed for this repository found no known API key, cloud access key, private key, OAuth token, or JWT pattern in the current tracked files or reachable commit history. This is a practical repository audit, not a replacement for provider-side secret scanning and credential rotation policies.
 
 ## Deployment Architecture
 

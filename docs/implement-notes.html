@@ -234,7 +234,7 @@
     <header class="page-header">
       <div class="meta-row">
         <span class="pill accent">Implementation memory</span>
-        <span class="pill">Cập nhật cuối: 2026-07-24 16:26:06 +07:00</span>
+        <span class="pill">Cập nhật cuối: 2026-07-24 16:43:55 +07:00</span>
         <span class="pill">Người note: KhanhGiauTen</span>
       </div>
       <h1>Graphify AI Implementation Notes</h1>
@@ -246,6 +246,122 @@
 
     <div class="layout">
       <section class="notes" aria-label="Danh sách note triển khai">
+        <article class="note-card" data-timestamp="2026-07-24T16:43:55+07:00">
+          <header class="note-header">
+            <div class="card-meta">
+              <span class="pill accent">2026-07-24 16:43:55 +07:00</span>
+              <span class="pill">Người note: KhanhGiauTen</span>
+              <span class="pill">Loại: Dependency security</span>
+            </div>
+            <h2 class="note-title">Cập nhật dependency frontend sau npm audit</h2>
+          </header>
+          <div class="note-body">
+            <div class="fields">
+              <div class="field">
+                <div class="label">Phạm vi</div>
+                <div class="value">
+                  Khóa dependency frontend sau khi rà security cho public-repo readiness.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Thay đổi</div>
+                <div class="value">
+                  <code>npm audit fix</code> cập nhật Axios lên 1.18.1 và Next lên 16.2.11 trong lockfile.
+                  Sau đó ghim PostCSS 8.5.22 và Sharp 0.35.3 qua package dependency/override,
+                  thay cho PostCSS 8.5.10 và Sharp 0.34.5 bị audit cảnh báo.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Lý do</div>
+                <div class="value">
+                  Audit ban đầu có high-severity advisories. Không dùng <code>npm audit fix --force</code>
+                  vì command đề nghị hạ Next xuống 9.3.3 không phù hợp với ứng dụng Next 16 hiện tại.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Tác động</div>
+                <div class="value">
+                  Frontend dùng các bản patch mới hơn trong cùng stack hiện hành; không thay đổi UI/API contract.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Kiểm chứng</div>
+                <div class="value">
+                  <code>npm install</code> và <code>npm audit --audit-level=moderate</code> trả về
+                  <code>found 0 vulnerabilities</code>. Frontend typecheck và production build pass;
+                  backend test pass 49/49 với thư mục temporary test nằm trong workspace.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Review tiếp</div>
+                <div class="value">
+                  CI tiếp tục chạy <code>npm audit --audit-level=moderate</code> trên mọi push để phát hiện advisory mới.
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="note-card" data-timestamp="2026-07-24T16:37:51+07:00">
+          <header class="note-header">
+            <div class="card-meta">
+              <span class="pill accent">2026-07-24 16:37:51 +07:00</span>
+              <span class="pill">Người note: KhanhGiauTen</span>
+              <span class="pill">Loại: Public-readiness và tài liệu</span>
+            </div>
+            <h2 class="note-title">Rà soát public repo và hoàn thiện hướng dẫn chạy local</h2>
+          </header>
+          <div class="note-body">
+            <div class="fields">
+              <div class="field">
+                <div class="label">Phạm vi</div>
+                <div class="value">
+                  Kiểm tra credential/PII trong file đang track và Git history, bảo vệ biến môi trường local,
+                  và mở rộng README cho người review chạy project từ clone mới.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Thay đổi</div>
+                <div class="value">
+                  Bổ sung ignore cho <code>.env.*</code> nhưng giữ lại template <code>*.env.example</code>.
+                  README có status chưa deploy, prerequisites, setup Windows, hai terminal chạy backend/frontend,
+                  smoke test, Docker Compose, troubleshooting và checklist public-repo safety.
+                  <code>docs/ARCHITECTURE.md</code> ghi rõ trạng thái local-first và ranh giới an toàn của biến môi trường.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Kết quả rà soát</div>
+                <div class="value">
+                  Không thấy private key, API key, cloud access key, GitHub token, Slack token hay JWT theo các pattern phổ biến
+                  trong HEAD hoặc 28 commit reachable. Dataset fixture dùng ID tổng hợp. Git commit metadata hiện có email cá nhân,
+                  nên cần rewrite history nếu chủ repo không muốn email này xuất hiện khi public.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Lý do</div>
+                <div class="value">
+                  Repo dự kiến public cho nhà tuyển dụng cần hướng dẫn local tự đủ và tránh rủi ro vô tình stage
+                  file cấu hình chứa credential hoặc bỏ sót metadata public.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Kiểm chứng</div>
+                <div class="value">
+                  Rà bằng pattern trên working tree và toàn bộ reachable history, kiểm tra template env, ignore rules,
+                  workflow CI/CD, fixture demo, và screenshot đại diện. Chưa rewrite Git history và chưa deploy thật.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Review tiếp</div>
+                <div class="value">
+                  Trước public, xác nhận có cần thay email commit bằng GitHub noreply hay không. Khi đã deploy,
+                  thay README status local-only bằng URL frontend/backend và kết quả smoke production.
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
         <article class="note-card" data-timestamp="2026-07-24T16:26:06+07:00">
           <header class="note-header">
             <div class="card-meta">

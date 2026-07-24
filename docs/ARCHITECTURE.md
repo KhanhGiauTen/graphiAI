@@ -14,6 +14,7 @@ Graphify AI là nền tảng hỗ trợ chuyển dữ liệu bảng CSV thành m
 - AI: rule-based schema recommender, OpenAI-compatible LLM mode tùy chọn, heuristic fallback mặc định.
 - Infra: Docker Compose, GitHub Actions CI, script smoke test.
 - Deployment target: Vercel frontend, Render backend Docker service, Render Postgres, Render persistent disk.
+- Trạng thái vận hành: chưa có hosted deployment; đường đánh giá chính là local native hoặc Docker Compose.
 
 ## Cấu trúc repo
 
@@ -76,6 +77,12 @@ SECRET_KEY=change-this-in-production
 
 Frontend dùng `NEXT_PUBLIC_API_URL`, mặc định là `http://127.0.0.1:8000/api/v1`.
 
+Public-repo safety:
+
+- Local credential files dùng quy ước `.env`, `.env.*`; chỉ các template `*.env.example` được version control.
+- `NEXT_PUBLIC_*` là client-visible nên chỉ dùng cho API URL công khai, không chứa token, API key, `SECRET_KEY` hay `DATABASE_URL`.
+- Trước khi public repo, kiểm tra cả Git history vì email commit và credential từng commit vẫn có thể bị lộ dù file hiện tại đã bị xóa.
+
 Production target:
 
 - Backend chạy trên Render Docker service, đọc `PORT` từ hosting platform.
@@ -126,7 +133,7 @@ Smoke test khi backend đang chạy:
 
 ## Production gaps đã biết
 
-- Hosted deployment đã có cấu hình Render/Vercel và workflow CD, nhưng vẫn cần thiết lập dashboard/secrets thực tế.
+- Hosted deployment chưa được thực hiện. Repo có cấu hình Render/Vercel và workflow CD, nhưng vẫn cần thiết lập dashboard, secrets và post-deploy smoke test thực tế.
 - Persistent rate-limit store, observability dashboards, object storage, access-control hardening, và graph ML experiment infrastructure nghiêm túc vẫn đang pending.
 - SQLite/local files phù hợp demo local, chưa phải kiến trúc production.
 - AI LLM mode phải luôn có fallback heuristic và validation để tránh output hallucinated.

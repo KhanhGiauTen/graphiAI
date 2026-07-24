@@ -8,8 +8,12 @@ __pycache__/
 venv/
 *.egg-info/
 
-# Local app state
+# Local app state and credentials
+# Keep templates versioned, but never stage local or production values.
 .env
+.env.*
+!.env.example
+!**/.env.example
 backend/graphify.db
 backend/uploads/*
 !backend/uploads/.gitkeep
