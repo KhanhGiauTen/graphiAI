@@ -13,6 +13,7 @@ Graphify AI là nền tảng hỗ trợ chuyển dữ liệu bảng CSV thành m
 - Storage MVP: SQLite metadata tại `backend/graphify.db`, file upload tại `backend/uploads`, export tại `backend/exports`.
 - AI: rule-based schema recommender, OpenAI-compatible LLM mode tùy chọn, heuristic fallback mặc định.
 - Infra: Docker Compose, GitHub Actions CI, script smoke test.
+- Deployment target: Vercel frontend, Render backend Docker service, Render Postgres, Render persistent disk.
 
 ## Cấu trúc repo
 
@@ -29,8 +30,10 @@ Graphify AI là nền tảng hỗ trợ chuyển dữ liệu bảng CSV thành m
 - `frontend/src/lib/api.ts`: Axios client mặc định trỏ tới `http://127.0.0.1:8000/api/v1`.
 - `frontend/src/types`: TypeScript types khớp backend schemas.
 - `scripts/smoke_test.py`: kiểm tra luồng API chính end-to-end.
-- `docs`: demo walkthrough, screenshots, architecture memory, implementation notes.
-- `phase*.md`: roadmap theo phase từ scaffold tới platform expansion.
+- `render.yaml`: Render Blueprint cho backend Docker service, Postgres và persistent disk.
+- `.github/workflows`: CI và workflow deploy production.
+- `docs`: demo walkthrough, deployment guide, screenshots, architecture memory, implementation notes.
+- Roadmap phase trước đây đã được gom vào README/documentation; không còn giữ các file `phase*.md` ở root.
 
 ## Luồng chính
 
@@ -72,6 +75,14 @@ SECRET_KEY=change-this-in-production
 ```
 
 Frontend dùng `NEXT_PUBLIC_API_URL`, mặc định là `http://127.0.0.1:8000/api/v1`.
+
+Production target:
+
+- Backend chạy trên Render Docker service, đọc `PORT` từ hosting platform.
+- `DATABASE_URL` dùng Render Postgres hoặc URL Postgres tương thích SQLAlchemy.
+- Upload/export production dùng persistent disk tại `/var/data/uploads` và `/var/data/exports`.
+- `ALLOWED_ORIGINS` production phải là deployed frontend URL, không dùng localhost hoặc wildcard.
+- Frontend Vercel dùng `NEXT_PUBLIC_API_URL=https://graphiai-api.onrender.com/api/v1` hoặc URL backend production thực tế.
 
 ## Lệnh chạy local
 
@@ -115,7 +126,8 @@ Smoke test khi backend đang chạy:
 
 ## Production gaps đã biết
 
-- Hosted deployment, CI/CD release flow, persistent rate-limit store, observability dashboards, production database, object storage, access-control hardening, và graph ML experiment infrastructure nghiêm túc vẫn đang pending.
+- Hosted deployment đã có cấu hình Render/Vercel và workflow CD, nhưng vẫn cần thiết lập dashboard/secrets thực tế.
+- Persistent rate-limit store, observability dashboards, object storage, access-control hardening, và graph ML experiment infrastructure nghiêm túc vẫn đang pending.
 - SQLite/local files phù hợp demo local, chưa phải kiến trúc production.
 - AI LLM mode phải luôn có fallback heuristic và validation để tránh output hallucinated.
 

@@ -234,7 +234,7 @@
     <header class="page-header">
       <div class="meta-row">
         <span class="pill accent">Implementation memory</span>
-        <span class="pill">Cập nhật cuối: 2026-07-02 15:08:07 +07:00</span>
+        <span class="pill">Cập nhật cuối: 2026-07-24 16:26:06 +07:00</span>
         <span class="pill">Người note: KhanhGiauTen</span>
       </div>
       <h1>Graphify AI Implementation Notes</h1>
@@ -246,6 +246,62 @@
 
     <div class="layout">
       <section class="notes" aria-label="Danh sách note triển khai">
+        <article class="note-card" data-timestamp="2026-07-24T16:26:06+07:00">
+          <header class="note-header">
+            <div class="card-meta">
+              <span class="pill accent">2026-07-24 16:26:06 +07:00</span>
+              <span class="pill">Người note: KhanhGiauTen</span>
+              <span class="pill">Loại: Tài liệu và cấu trúc repo</span>
+            </div>
+            <h2 class="note-title">Viết lại README chuyên nghiệp và gỡ phase roadmap files</h2>
+          </header>
+          <div class="note-body">
+            <div class="fields">
+              <div class="field">
+                <div class="label">Phạm vi</div>
+                <div class="value">
+                  Cập nhật tài liệu chính của repo, cấu trúc tài liệu root, và bản đồ kiến trúc phiên sau.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Thay đổi</div>
+                <div class="value">
+                  Viết lại <code>README.md</code> với mô tả sản phẩm, screenshot demo, Mermaid diagram cho kiến trúc hệ thống,
+                  luồng hoạt động, database/storage, deploy architecture, API surface, setup, verification, roadmap và documentation map.
+                  Xóa các file <code>phase*.md</code> khỏi root vì roadmap đã được gom vào README và docs hiện hành.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Lý do</div>
+                <div class="value">
+                  README cũ còn thiên về milestone nội bộ và liệt kê phase files. Bản mới phù hợp hơn cho người xem repo,
+                  nhà tuyển dụng hoặc reviewer kỹ thuật vì trình bày rõ product value, kiến trúc, dữ liệu, vận hành và kiểm thử.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Tác động</div>
+                <div class="value">
+                  Người mới vào repo có thể hiểu nhanh hệ thống từ README mà không cần đọc các file phase rời rạc.
+                  <code>docs/ARCHITECTURE.md</code> được cập nhật để không còn tham chiếu sai tới <code>phase*.md</code>.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Kiểm chứng</div>
+                <div class="value">
+                  Kiểm tra git status trước khi sửa, xác nhận danh sách phase files, cập nhật tài liệu liên quan và rà lại
+                  các tham chiếu <code>phase*.md</code> còn sót bằng ripgrep.
+                </div>
+              </div>
+              <div class="field">
+                <div class="label">Review tiếp</div>
+                <div class="value">
+                  Khi có URL deploy thật, cập nhật README phần Deployment bằng production frontend/backend URL chính thức.
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
         <article class="note-card" data-timestamp="2026-07-02T15:08:07+07:00">
           <header class="note-header">
             <div class="card-meta">
