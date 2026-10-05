@@ -246,6 +246,10 @@
 
     <div class="layout">
       <section class="notes" aria-label="Danh sách note triển khai">
+        <article class="note-card" data-timestamp="2026-10-05T16:28:33+07:00">
+          <header class="note-header"><div class="card-meta"><span class="pill accent">2026-10-05 16:28:33 +07:00</span><span class="pill">Người note: KhanhGiauTen</span></div><h2 class="note-title">Xuất JSON bằng native attachment</h2></header>
+          <p>Phạm vi: export ở public demo. Đổi blob URL thu hồi ngay sau click sang liên kết same-origin GET chỉ lấy fixture và schema trong whitelist. Server trả Content-Disposition attachment, nosniff, 404 cho ID không hợp lệ; không đọc dữ liệu riêng hay đường dẫn người dùng. Lý do: kiểm thử download trong trình duyệt nhúng timeout, cần cơ chế tải trực tiếp ổn định và kiểm chứng HTTP được. Kiểm chứng: chạy typecheck/build, kiểm tra JSON và header trên production sau deploy; tiếp tục giữ phạm vi snapshot tổng hợp.</p>
+        </article>
         <article class="note-card" data-timestamp="2026-10-05T16:20:00+07:00">
           <header class="note-header"><div class="card-meta"><span class="pill accent">2026-10-05 16:20:00 +07:00</span><span class="pill">Người note: KhanhGiauTen</span></div><h2 class="note-title">Vá dependency trước public release</h2></header>
           <div class="note-body"><p>Audit phát hiện advisory mới trong Next, Axios, PostCSS, Sharp và Nano ID. Cập nhật Next 16.3.8, Axios 1.20.0, PostCSS 8.5.28, overrides Sharp 0.35.5 và Nano ID 3.3.19; npm audit fix không dùng --force.</p><p>Build/typecheck pass; audit --omit=dev trả 0 vulnerabilities. Tailwind development dependency còn advisory braces/glob chưa vá, không nâng Tailwind major chỉ để tắt cảnh báo. Backend regression pass 49/49 khi dùng temporary directory trong workspace.</p></div>

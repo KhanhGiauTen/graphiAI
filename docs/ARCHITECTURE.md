@@ -9,6 +9,7 @@ Graphify AI là nền tảng hỗ trợ chuyển dữ liệu bảng CSV thành m
 ## Public demo cho HR
 
 - `frontend/src/app/demo/page.tsx` tái sử dụng GraphExplorer và QualityPanel với snapshot fixture tổng hợp.
+- `GET /api/demo-export?dataset=...&schema=...` chỉ xuất variant trong snapshot whitelist, trả JSON attachment; tham số không hợp lệ trả 404. Không đọc upload, DB hay file theo đường dẫn người dùng.
 - Chạy `.venv/Scripts/python.exe scripts/export_public_demo.py` để tạo `frontend/src/data/public-demo.json` bằng chính DataProfiler, RuleBasedSchemaRecommender, GraphBuilder và GraphQualityScorer.
 - Generator chỉ đọc ba fixture được whitelist trong `backend/tests/fixtures`; không đọc uploads, DB hoặc env.
 - Vercel deploy riêng thư mục `frontend`, `NEXT_PUBLIC_PUBLIC_DEMO=true` chuyển các route backend-dependent về `/demo`.

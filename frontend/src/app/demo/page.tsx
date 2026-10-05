@@ -18,14 +18,7 @@ export default function PublicDemoPage() {
   const dataset = demos.find((item) => item.id === datasetId) ?? demos[0]
   const variant = dataset.variants[schemaIndex] ?? dataset.variants[0]
 
-  function download() {
-    const url = URL.createObjectURL(new Blob([JSON.stringify(variant, null, 2)], { type: "application/json" }))
-    const link = document.createElement("a")
-    link.href = url
-    link.download = `graphify-${dataset.id}-${variant.schema.id}.json`
-    link.click()
-    URL.revokeObjectURL(url)
-  }
+  const exportHref = `/api/demo-export?dataset=${encodeURIComponent(dataset.id)}&schema=${encodeURIComponent(variant.schema.id)}`
 
   return (
     <>
@@ -46,7 +39,7 @@ export default function PublicDemoPage() {
                 {dataset.variants.map((item, index) => <option key={item.schema.id} value={index}>{item.schema.name}</option>)}
               </select>
             </label>
-            <button className="btn-secondary" onClick={download}><Download size={16} aria-hidden="true" /> Export JSON</button>
+            <a className="btn-secondary" href={exportHref} download><Download size={16} aria-hidden="true" /> Export JSON</a>
           </div>
         </header>
         <section className="grid grid-cols-2 gap-4 border-b border-border-soft pb-6 md:grid-cols-4" aria-label="Dataset summary">

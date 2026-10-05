@@ -20,6 +20,8 @@ Vercel `frontend/vercel.json` sets `NEXT_PUBLIC_PUBLIC_DEMO=true` in the build c
 
 Source pushes use the configured Git integration. Do not add tokens or `.vercel` state to Git. Full backend deployment remains a separate Render/database/storage task.
 
+JSON export uses the same-origin `/api/demo-export` attachment endpoint with dataset/schema IDs restricted to the public snapshot. This avoids immediately revoked blob URLs and supports native browser downloads. Unknown IDs return 404.
+
 ## Verification
 
 - Public `/demo` returns without authentication, root redirects to `/demo`.
