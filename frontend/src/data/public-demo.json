@@ -1,0 +1,3112 @@
+[
+  {
+    "id": "fraud_transactions",
+    "name": "Fraud transactions",
+    "profile": {
+      "filename": "fraud_transactions.csv",
+      "row_count": 10,
+      "column_count": 7,
+      "total_missing_rate": 0.0,
+      "memory_usage_mb": 0.002948760986328125,
+      "columns": [
+        {
+          "name": "user_id",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 6,
+          "cardinality_ratio": 0.6,
+          "sample_values": [
+            "U001",
+            "U002",
+            "U001",
+            "U003",
+            "U004"
+          ],
+          "value_counts": {
+            "U001": 3,
+            "U002": 2,
+            "U003": 2,
+            "U004": 1,
+            "U005": 1,
+            "U006": 1
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "id"
+        },
+        {
+          "name": "transaction_id",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 10,
+          "cardinality_ratio": 1.0,
+          "sample_values": [
+            "T001",
+            "T002",
+            "T003",
+            "T004",
+            "T005"
+          ],
+          "value_counts": {
+            "T001": 1,
+            "T002": 1,
+            "T003": 1,
+            "T004": 1,
+            "T005": 1,
+            "T006": 1,
+            "T007": 1,
+            "T008": 1,
+            "T009": 1,
+            "T010": 1
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "id"
+        },
+        {
+          "name": "merchant_id",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 4,
+          "cardinality_ratio": 0.4,
+          "sample_values": [
+            "M001",
+            "M001",
+            "M002",
+            "M003",
+            "M001"
+          ],
+          "value_counts": {
+            "M001": 4,
+            "M002": 3,
+            "M004": 2,
+            "M003": 1
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "id"
+        },
+        {
+          "name": "device_id",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 6,
+          "cardinality_ratio": 0.6,
+          "sample_values": [
+            "D001",
+            "D002",
+            "D001",
+            "D003",
+            "D004"
+          ],
+          "value_counts": {
+            "D001": 3,
+            "D002": 2,
+            "D003": 2,
+            "D004": 1,
+            "D005": 1,
+            "D006": 1
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "id"
+        },
+        {
+          "name": "amount",
+          "dtype": "float64",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 10,
+          "cardinality_ratio": 1.0,
+          "sample_values": [
+            100.5,
+            9500.0,
+            250.0,
+            70.25,
+            12000.0
+          ],
+          "value_counts": {
+            "100.5": 1,
+            "9500.0": 1,
+            "250.0": 1,
+            "70.25": 1,
+            "12000.0": 1,
+            "35.75": 1,
+            "220.0": 1,
+            "640.0": 1,
+            "8000.0": 1,
+            "95.0": 1
+          },
+          "min_val": 35.75,
+          "max_val": 12000.0,
+          "mean_val": 3091.15,
+          "inferred_role": "numerical"
+        },
+        {
+          "name": "timestamp",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 10,
+          "cardinality_ratio": 1.0,
+          "sample_values": [
+            "2026-01-01T10:00:00",
+            "2026-01-01T10:05:00",
+            "2026-01-02T11:00:00",
+            "2026-01-02T11:30:00",
+            "2026-01-03T12:00:00"
+          ],
+          "value_counts": {
+            "2026-01-01T10:00:00": 1,
+            "2026-01-01T10:05:00": 1,
+            "2026-01-02T11:00:00": 1,
+            "2026-01-02T11:30:00": 1,
+            "2026-01-03T12:00:00": 1,
+            "2026-01-03T12:30:00": 1,
+            "2026-01-04T09:00:00": 1,
+            "2026-01-04T09:10:00": 1,
+            "2026-01-05T13:20:00": 1,
+            "2026-01-05T13:40:00": 1
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "timestamp"
+        },
+        {
+          "name": "is_fraud",
+          "dtype": "int64",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 2,
+          "cardinality_ratio": 0.2,
+          "sample_values": [
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "value_counts": {
+            "0": 7,
+            "1": 3
+          },
+          "min_val": 0,
+          "max_val": 1,
+          "mean_val": 0.3,
+          "inferred_role": "label"
+        }
+      ],
+      "id_columns": [
+        "user_id",
+        "transaction_id",
+        "merchant_id",
+        "device_id"
+      ],
+      "label_columns": [
+        "is_fraud"
+      ],
+      "has_timestamps": true
+    },
+    "variants": [
+      {
+        "schema": {
+          "id": "rule_transaction_centered",
+          "name": "Transaction-Centered Graph",
+          "description": "Use Transaction as an event node and attach row-level features to it.",
+          "node_types": [
+            {
+              "name": "Transaction",
+              "source_column": "transaction_id",
+              "feature_columns": [
+                "amount",
+                "timestamp"
+              ],
+              "count_estimate": null,
+              "reasoning": "`transaction_id` is highly unique and works as an event node."
+            },
+            {
+              "name": "User",
+              "source_column": "user_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`user_id` is ID-like and repeatedly links events."
+            },
+            {
+              "name": "Merchant",
+              "source_column": "merchant_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`merchant_id` is ID-like and repeatedly links events."
+            },
+            {
+              "name": "Device",
+              "source_column": "device_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`device_id` is ID-like and repeatedly links events."
+            }
+          ],
+          "edge_types": [
+            {
+              "source": "User",
+              "target": "Transaction",
+              "relation": "MADE",
+              "source_columns": [
+                "user_id",
+                "transaction_id"
+              ],
+              "directed": true,
+              "reasoning": "Connect User to Transaction through each row event."
+            },
+            {
+              "source": "Merchant",
+              "target": "Transaction",
+              "relation": "PAID_TO",
+              "source_columns": [
+                "merchant_id",
+                "transaction_id"
+              ],
+              "directed": true,
+              "reasoning": "Connect Merchant to Transaction through each row event."
+            },
+            {
+              "source": "Device",
+              "target": "Transaction",
+              "relation": "USED",
+              "source_columns": [
+                "device_id",
+                "transaction_id"
+              ],
+              "directed": true,
+              "reasoning": "Connect Device to Transaction through each row event."
+            }
+          ],
+          "suggested_tasks": [
+            "Fraud Detection",
+            "Link Prediction",
+            "Temporal Graph Analysis"
+          ],
+          "quality_score": 88.62,
+          "warnings": [
+            "Use time-aware splits when training with timestamped events.",
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`amount` has very high cardinality and may need encoding or exclusion.",
+            "`timestamp` has very high cardinality and may need encoding or exclusion."
+          ],
+          "strengths": [
+            "Preserves event features.",
+            "Strong fit for fraud or interaction datasets.",
+            "Detected 4 entity-like columns that can form relationships.",
+            "Detected 2 candidate feature columns for modeling.",
+            "Label column is available, enabling supervised baseline evaluation.",
+            "Selected schema defines 3 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [
+            "Creates more nodes than a direct graph."
+          ],
+          "recommended_models": [
+            {
+              "name": "GraphSAGE",
+              "reason": "Useful supervised baseline when labels exist."
+            }
+          ]
+        },
+        "preview": {
+          "schema_id": "rule_transaction_centered",
+          "stats": {
+            "num_nodes": 26,
+            "num_edges": 30,
+            "num_node_types": 4,
+            "num_edge_types": 3,
+            "avg_degree": 2.3077,
+            "density": 0.046154,
+            "num_connected_components": 1,
+            "top_degree_nodes": [
+              {
+                "id": "Merchant:M001",
+                "type": "Merchant",
+                "degree": 4
+              },
+              {
+                "id": "Transaction:T001",
+                "type": "Transaction",
+                "degree": 3
+              },
+              {
+                "id": "User:U001",
+                "type": "User",
+                "degree": 3
+              },
+              {
+                "id": "Device:D001",
+                "type": "Device",
+                "degree": 3
+              },
+              {
+                "id": "Transaction:T002",
+                "type": "Transaction",
+                "degree": 3
+              },
+              {
+                "id": "Transaction:T003",
+                "type": "Transaction",
+                "degree": 3
+              },
+              {
+                "id": "Merchant:M002",
+                "type": "Merchant",
+                "degree": 3
+              },
+              {
+                "id": "Transaction:T004",
+                "type": "Transaction",
+                "degree": 3
+              },
+              {
+                "id": "Transaction:T005",
+                "type": "Transaction",
+                "degree": 3
+              },
+              {
+                "id": "Transaction:T006",
+                "type": "Transaction",
+                "degree": 3
+              }
+            ]
+          },
+          "nodes": [
+            {
+              "id": "Transaction:T001",
+              "type": "Transaction",
+              "label": "T001",
+              "features": {
+                "amount": 100.5,
+                "timestamp": "2026-01-01T10:00:00"
+              }
+            },
+            {
+              "id": "User:U001",
+              "type": "User",
+              "label": "U001",
+              "features": {}
+            },
+            {
+              "id": "Merchant:M001",
+              "type": "Merchant",
+              "label": "M001",
+              "features": {}
+            },
+            {
+              "id": "Device:D001",
+              "type": "Device",
+              "label": "D001",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T002",
+              "type": "Transaction",
+              "label": "T002",
+              "features": {
+                "amount": 9500.0,
+                "timestamp": "2026-01-01T10:05:00"
+              }
+            },
+            {
+              "id": "User:U002",
+              "type": "User",
+              "label": "U002",
+              "features": {}
+            },
+            {
+              "id": "Device:D002",
+              "type": "Device",
+              "label": "D002",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T003",
+              "type": "Transaction",
+              "label": "T003",
+              "features": {
+                "amount": 250.0,
+                "timestamp": "2026-01-02T11:00:00"
+              }
+            },
+            {
+              "id": "Merchant:M002",
+              "type": "Merchant",
+              "label": "M002",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T004",
+              "type": "Transaction",
+              "label": "T004",
+              "features": {
+                "amount": 70.25,
+                "timestamp": "2026-01-02T11:30:00"
+              }
+            },
+            {
+              "id": "User:U003",
+              "type": "User",
+              "label": "U003",
+              "features": {}
+            },
+            {
+              "id": "Merchant:M003",
+              "type": "Merchant",
+              "label": "M003",
+              "features": {}
+            },
+            {
+              "id": "Device:D003",
+              "type": "Device",
+              "label": "D003",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T005",
+              "type": "Transaction",
+              "label": "T005",
+              "features": {
+                "amount": 12000.0,
+                "timestamp": "2026-01-03T12:00:00"
+              }
+            },
+            {
+              "id": "User:U004",
+              "type": "User",
+              "label": "U004",
+              "features": {}
+            },
+            {
+              "id": "Device:D004",
+              "type": "Device",
+              "label": "D004",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T006",
+              "type": "Transaction",
+              "label": "T006",
+              "features": {
+                "amount": 35.75,
+                "timestamp": "2026-01-03T12:30:00"
+              }
+            },
+            {
+              "id": "Transaction:T007",
+              "type": "Transaction",
+              "label": "T007",
+              "features": {
+                "amount": 220.0,
+                "timestamp": "2026-01-04T09:00:00"
+              }
+            },
+            {
+              "id": "User:U005",
+              "type": "User",
+              "label": "U005",
+              "features": {}
+            },
+            {
+              "id": "Merchant:M004",
+              "type": "Merchant",
+              "label": "M004",
+              "features": {}
+            },
+            {
+              "id": "Device:D005",
+              "type": "Device",
+              "label": "D005",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T008",
+              "type": "Transaction",
+              "label": "T008",
+              "features": {
+                "amount": 640.0,
+                "timestamp": "2026-01-04T09:10:00"
+              }
+            },
+            {
+              "id": "Transaction:T009",
+              "type": "Transaction",
+              "label": "T009",
+              "features": {
+                "amount": 8000.0,
+                "timestamp": "2026-01-05T13:20:00"
+              }
+            },
+            {
+              "id": "User:U006",
+              "type": "User",
+              "label": "U006",
+              "features": {}
+            },
+            {
+              "id": "Device:D006",
+              "type": "Device",
+              "label": "D006",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T010",
+              "type": "Transaction",
+              "label": "T010",
+              "features": {
+                "amount": 95.0,
+                "timestamp": "2026-01-05T13:40:00"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "source": "User:U001",
+              "target": "Transaction:T001",
+              "relation": "MADE",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Transaction:T003",
+              "relation": "MADE",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Transaction:T008",
+              "relation": "MADE",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M001",
+              "target": "Transaction:T001",
+              "relation": "PAID_TO",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M001",
+              "target": "Transaction:T002",
+              "relation": "PAID_TO",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M001",
+              "target": "Transaction:T005",
+              "relation": "PAID_TO",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M001",
+              "target": "Transaction:T009",
+              "relation": "PAID_TO",
+              "features": {}
+            },
+            {
+              "source": "Device:D001",
+              "target": "Transaction:T001",
+              "relation": "USED",
+              "features": {}
+            },
+            {
+              "source": "Device:D001",
+              "target": "Transaction:T003",
+              "relation": "USED",
+              "features": {}
+            },
+            {
+              "source": "Device:D001",
+              "target": "Transaction:T008",
+              "relation": "USED",
+              "features": {}
+            },
+            {
+              "source": "User:U002",
+              "target": "Transaction:T002",
+              "relation": "MADE",
+              "features": {}
+            },
+            {
+              "source": "User:U002",
+              "target": "Transaction:T006",
+              "relation": "MADE",
+              "features": {}
+            },
+            {
+              "source": "Device:D002",
+              "target": "Transaction:T002",
+              "relation": "USED",
+              "features": {}
+            },
+            {
+              "source": "Device:D002",
+              "target": "Transaction:T006",
+              "relation": "USED",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M002",
+              "target": "Transaction:T003",
+              "relation": "PAID_TO",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M002",
+              "target": "Transaction:T006",
+              "relation": "PAID_TO",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M002",
+              "target": "Transaction:T010",
+              "relation": "PAID_TO",
+              "features": {}
+            },
+            {
+              "source": "User:U003",
+              "target": "Transaction:T004",
+              "relation": "MADE",
+              "features": {}
+            },
+            {
+              "source": "User:U003",
+              "target": "Transaction:T010",
+              "relation": "MADE",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M003",
+              "target": "Transaction:T004",
+              "relation": "PAID_TO",
+              "features": {}
+            },
+            {
+              "source": "Device:D003",
+              "target": "Transaction:T004",
+              "relation": "USED",
+              "features": {}
+            },
+            {
+              "source": "Device:D003",
+              "target": "Transaction:T010",
+              "relation": "USED",
+              "features": {}
+            },
+            {
+              "source": "User:U004",
+              "target": "Transaction:T005",
+              "relation": "MADE",
+              "features": {}
+            },
+            {
+              "source": "Device:D004",
+              "target": "Transaction:T005",
+              "relation": "USED",
+              "features": {}
+            },
+            {
+              "source": "User:U005",
+              "target": "Transaction:T007",
+              "relation": "MADE",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M004",
+              "target": "Transaction:T007",
+              "relation": "PAID_TO",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M004",
+              "target": "Transaction:T008",
+              "relation": "PAID_TO",
+              "features": {}
+            },
+            {
+              "source": "Device:D005",
+              "target": "Transaction:T007",
+              "relation": "USED",
+              "features": {}
+            },
+            {
+              "source": "User:U006",
+              "target": "Transaction:T009",
+              "relation": "MADE",
+              "features": {}
+            },
+            {
+              "source": "Device:D006",
+              "target": "Transaction:T009",
+              "relation": "USED",
+              "features": {}
+            }
+          ]
+        },
+        "quality": {
+          "final_score": 82.62,
+          "suitability": "recommended",
+          "component_scores": {
+            "entity_confidence": 0.8875000000000001,
+            "relationship_confidence": 0.81,
+            "feature_richness": 0.6614285714285714,
+            "task_suitability": 1.0,
+            "connectivity_estimate": 0.7,
+            "interpretability": 0.9
+          },
+          "strengths": [
+            "Detected 4 entity-like columns that can form relationships.",
+            "Detected 2 candidate feature columns for modeling.",
+            "Label column is available, enabling supervised baseline evaluation.",
+            "Selected schema defines 3 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [],
+          "warnings": [
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`amount` has very high cardinality and may need encoding or exclusion.",
+            "`timestamp` has very high cardinality and may need encoding or exclusion."
+          ],
+          "leakage_warnings": [],
+          "health_checks": [
+            {
+              "name": "entity_columns",
+              "status": "pass",
+              "message": "Found 4 entity-like ID columns for graph construction."
+            },
+            {
+              "name": "feature_columns",
+              "status": "pass",
+              "message": "Found 2 candidate feature columns."
+            },
+            {
+              "name": "missing_values",
+              "status": "pass",
+              "message": "Dataset missing rate is 0.0%."
+            },
+            {
+              "name": "temporal_ordering",
+              "status": "warning",
+              "message": "Timestamped data should use time-aware splits to avoid future leakage."
+            },
+            {
+              "name": "label_balance:is_fraud",
+              "status": "pass",
+              "message": "`is_fraud` label distribution looks usable."
+            },
+            {
+              "name": "high_cardinality:amount",
+              "status": "warning",
+              "message": "`amount` has very high cardinality and may need encoding or exclusion."
+            },
+            {
+              "name": "high_cardinality:timestamp",
+              "status": "warning",
+              "message": "`timestamp` has very high cardinality and may need encoding or exclusion."
+            }
+          ],
+          "explanation": "Graph suitability is `recommended` with a score of 82.6/100. It found 4 entity-like column(s). The selected schema is `Transaction-Centered Graph`. Review warnings before using this graph for ML."
+        }
+      },
+      {
+        "schema": {
+          "id": "rule_full_heterogeneous",
+          "name": "Full Heterogeneous Graph",
+          "description": "Represent every detected entity and connect every co-occurring entity pair.",
+          "node_types": [
+            {
+              "name": "User",
+              "source_column": "user_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`user_id` is ID-like and becomes a node type."
+            },
+            {
+              "name": "Transaction",
+              "source_column": "transaction_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`transaction_id` is ID-like and becomes a node type."
+            },
+            {
+              "name": "Merchant",
+              "source_column": "merchant_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`merchant_id` is ID-like and becomes a node type."
+            },
+            {
+              "name": "Device",
+              "source_column": "device_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`device_id` is ID-like and becomes a node type."
+            }
+          ],
+          "edge_types": [
+            {
+              "source": "User",
+              "target": "Transaction",
+              "relation": "CO_OCCURS_WITH",
+              "source_columns": [
+                "user_id",
+                "transaction_id"
+              ],
+              "directed": false,
+              "reasoning": "Both entity IDs appear in the same row."
+            },
+            {
+              "source": "User",
+              "target": "Merchant",
+              "relation": "CO_OCCURS_WITH",
+              "source_columns": [
+                "user_id",
+                "merchant_id"
+              ],
+              "directed": false,
+              "reasoning": "Both entity IDs appear in the same row."
+            },
+            {
+              "source": "User",
+              "target": "Device",
+              "relation": "CO_OCCURS_WITH",
+              "source_columns": [
+                "user_id",
+                "device_id"
+              ],
+              "directed": false,
+              "reasoning": "Both entity IDs appear in the same row."
+            },
+            {
+              "source": "Transaction",
+              "target": "Merchant",
+              "relation": "CO_OCCURS_WITH",
+              "source_columns": [
+                "transaction_id",
+                "merchant_id"
+              ],
+              "directed": false,
+              "reasoning": "Both entity IDs appear in the same row."
+            },
+            {
+              "source": "Transaction",
+              "target": "Device",
+              "relation": "CO_OCCURS_WITH",
+              "source_columns": [
+                "transaction_id",
+                "device_id"
+              ],
+              "directed": false,
+              "reasoning": "Both entity IDs appear in the same row."
+            },
+            {
+              "source": "Merchant",
+              "target": "Device",
+              "relation": "CO_OCCURS_WITH",
+              "source_columns": [
+                "merchant_id",
+                "device_id"
+              ],
+              "directed": false,
+              "reasoning": "Both entity IDs appear in the same row."
+            }
+          ],
+          "suggested_tasks": [
+            "Fraud Detection",
+            "Link Prediction",
+            "Temporal Graph Analysis"
+          ],
+          "quality_score": 82.42,
+          "warnings": [
+            "Preview only a sample for large datasets.",
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`amount` has very high cardinality and may need encoding or exclusion.",
+            "`timestamp` has very high cardinality and may need encoding or exclusion."
+          ],
+          "strengths": [
+            "Captures the richest co-occurrence structure.",
+            "Feature columns can be assigned later: amount, timestamp.",
+            "Detected 4 entity-like columns that can form relationships.",
+            "Detected 2 candidate feature columns for modeling.",
+            "Label column is available, enabling supervised baseline evaluation.",
+            "Selected schema defines 6 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [
+            "Can become dense and harder to explain."
+          ],
+          "recommended_models": [
+            {
+              "name": "HeteroGNN",
+              "reason": "Useful after validating heterogeneous structure."
+            }
+          ]
+        },
+        "preview": {
+          "schema_id": "rule_full_heterogeneous",
+          "stats": {
+            "num_nodes": 26,
+            "num_edges": 60,
+            "num_node_types": 4,
+            "num_edge_types": 1,
+            "avg_degree": 4.6154,
+            "density": 0.092308,
+            "num_connected_components": 1,
+            "top_degree_nodes": [
+              {
+                "id": "Merchant:M001",
+                "type": "Merchant",
+                "degree": 12
+              },
+              {
+                "id": "User:U001",
+                "type": "User",
+                "degree": 9
+              },
+              {
+                "id": "Device:D001",
+                "type": "Device",
+                "degree": 9
+              },
+              {
+                "id": "Merchant:M002",
+                "type": "Merchant",
+                "degree": 9
+              },
+              {
+                "id": "User:U002",
+                "type": "User",
+                "degree": 6
+              },
+              {
+                "id": "Device:D002",
+                "type": "Device",
+                "degree": 6
+              },
+              {
+                "id": "User:U003",
+                "type": "User",
+                "degree": 6
+              },
+              {
+                "id": "Device:D003",
+                "type": "Device",
+                "degree": 6
+              },
+              {
+                "id": "Merchant:M004",
+                "type": "Merchant",
+                "degree": 6
+              },
+              {
+                "id": "Transaction:T001",
+                "type": "Transaction",
+                "degree": 3
+              }
+            ]
+          },
+          "nodes": [
+            {
+              "id": "User:U001",
+              "type": "User",
+              "label": "U001",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T001",
+              "type": "Transaction",
+              "label": "T001",
+              "features": {}
+            },
+            {
+              "id": "Merchant:M001",
+              "type": "Merchant",
+              "label": "M001",
+              "features": {}
+            },
+            {
+              "id": "Device:D001",
+              "type": "Device",
+              "label": "D001",
+              "features": {}
+            },
+            {
+              "id": "User:U002",
+              "type": "User",
+              "label": "U002",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T002",
+              "type": "Transaction",
+              "label": "T002",
+              "features": {}
+            },
+            {
+              "id": "Device:D002",
+              "type": "Device",
+              "label": "D002",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T003",
+              "type": "Transaction",
+              "label": "T003",
+              "features": {}
+            },
+            {
+              "id": "Merchant:M002",
+              "type": "Merchant",
+              "label": "M002",
+              "features": {}
+            },
+            {
+              "id": "User:U003",
+              "type": "User",
+              "label": "U003",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T004",
+              "type": "Transaction",
+              "label": "T004",
+              "features": {}
+            },
+            {
+              "id": "Merchant:M003",
+              "type": "Merchant",
+              "label": "M003",
+              "features": {}
+            },
+            {
+              "id": "Device:D003",
+              "type": "Device",
+              "label": "D003",
+              "features": {}
+            },
+            {
+              "id": "User:U004",
+              "type": "User",
+              "label": "U004",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T005",
+              "type": "Transaction",
+              "label": "T005",
+              "features": {}
+            },
+            {
+              "id": "Device:D004",
+              "type": "Device",
+              "label": "D004",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T006",
+              "type": "Transaction",
+              "label": "T006",
+              "features": {}
+            },
+            {
+              "id": "User:U005",
+              "type": "User",
+              "label": "U005",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T007",
+              "type": "Transaction",
+              "label": "T007",
+              "features": {}
+            },
+            {
+              "id": "Merchant:M004",
+              "type": "Merchant",
+              "label": "M004",
+              "features": {}
+            },
+            {
+              "id": "Device:D005",
+              "type": "Device",
+              "label": "D005",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T008",
+              "type": "Transaction",
+              "label": "T008",
+              "features": {}
+            },
+            {
+              "id": "User:U006",
+              "type": "User",
+              "label": "U006",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T009",
+              "type": "Transaction",
+              "label": "T009",
+              "features": {}
+            },
+            {
+              "id": "Device:D006",
+              "type": "Device",
+              "label": "D006",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T010",
+              "type": "Transaction",
+              "label": "T010",
+              "features": {}
+            }
+          ],
+          "edges": [
+            {
+              "source": "User:U001",
+              "target": "Transaction:T001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Merchant:M001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Device:D001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Device:D001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Device:D001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Transaction:T003",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Merchant:M002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Transaction:T008",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Merchant:M004",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T001",
+              "target": "Merchant:M001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T001",
+              "target": "Device:D001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M001",
+              "target": "Device:D001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M001",
+              "target": "Device:D002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M001",
+              "target": "Device:D004",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M001",
+              "target": "Device:D006",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U002",
+              "target": "Transaction:T002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U002",
+              "target": "Merchant:M001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U002",
+              "target": "Device:D002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U002",
+              "target": "Device:D002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U002",
+              "target": "Transaction:T006",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U002",
+              "target": "Merchant:M002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T002",
+              "target": "Merchant:M001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T002",
+              "target": "Device:D002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T003",
+              "target": "Merchant:M002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T003",
+              "target": "Device:D001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M002",
+              "target": "Device:D001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M002",
+              "target": "Device:D002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M002",
+              "target": "Device:D003",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U003",
+              "target": "Transaction:T004",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U003",
+              "target": "Merchant:M003",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U003",
+              "target": "Device:D003",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U003",
+              "target": "Device:D003",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U003",
+              "target": "Transaction:T010",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U003",
+              "target": "Merchant:M002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T004",
+              "target": "Merchant:M003",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T004",
+              "target": "Device:D003",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M003",
+              "target": "Device:D003",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U004",
+              "target": "Transaction:T005",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U004",
+              "target": "Merchant:M001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U004",
+              "target": "Device:D004",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T005",
+              "target": "Merchant:M001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T005",
+              "target": "Device:D004",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T006",
+              "target": "Merchant:M002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T006",
+              "target": "Device:D002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U005",
+              "target": "Transaction:T007",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U005",
+              "target": "Merchant:M004",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U005",
+              "target": "Device:D005",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T007",
+              "target": "Merchant:M004",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T007",
+              "target": "Device:D005",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M004",
+              "target": "Device:D005",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Merchant:M004",
+              "target": "Device:D001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T008",
+              "target": "Merchant:M004",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T008",
+              "target": "Device:D001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U006",
+              "target": "Transaction:T009",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U006",
+              "target": "Merchant:M001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U006",
+              "target": "Device:D006",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T009",
+              "target": "Merchant:M001",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T009",
+              "target": "Device:D006",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T010",
+              "target": "Merchant:M002",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Transaction:T010",
+              "target": "Device:D003",
+              "relation": "CO_OCCURS_WITH",
+              "features": {}
+            }
+          ]
+        },
+        "quality": {
+          "final_score": 86.42,
+          "suitability": "recommended",
+          "component_scores": {
+            "entity_confidence": 0.8875000000000001,
+            "relationship_confidence": 1.0,
+            "feature_richness": 0.6614285714285714,
+            "task_suitability": 1.0,
+            "connectivity_estimate": 0.7,
+            "interpretability": 0.9
+          },
+          "strengths": [
+            "Detected 4 entity-like columns that can form relationships.",
+            "Detected 2 candidate feature columns for modeling.",
+            "Label column is available, enabling supervised baseline evaluation.",
+            "Selected schema defines 6 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [],
+          "warnings": [
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`amount` has very high cardinality and may need encoding or exclusion.",
+            "`timestamp` has very high cardinality and may need encoding or exclusion."
+          ],
+          "leakage_warnings": [],
+          "health_checks": [
+            {
+              "name": "entity_columns",
+              "status": "pass",
+              "message": "Found 4 entity-like ID columns for graph construction."
+            },
+            {
+              "name": "feature_columns",
+              "status": "pass",
+              "message": "Found 2 candidate feature columns."
+            },
+            {
+              "name": "missing_values",
+              "status": "pass",
+              "message": "Dataset missing rate is 0.0%."
+            },
+            {
+              "name": "temporal_ordering",
+              "status": "warning",
+              "message": "Timestamped data should use time-aware splits to avoid future leakage."
+            },
+            {
+              "name": "label_balance:is_fraud",
+              "status": "pass",
+              "message": "`is_fraud` label distribution looks usable."
+            },
+            {
+              "name": "high_cardinality:amount",
+              "status": "warning",
+              "message": "`amount` has very high cardinality and may need encoding or exclusion."
+            },
+            {
+              "name": "high_cardinality:timestamp",
+              "status": "warning",
+              "message": "`timestamp` has very high cardinality and may need encoding or exclusion."
+            }
+          ],
+          "explanation": "Graph suitability is `recommended` with a score of 86.4/100. It found 4 entity-like column(s). The selected schema is `Full Heterogeneous Graph`. Review warnings before using this graph for ML."
+        }
+      },
+      {
+        "schema": {
+          "id": "rule_minimal_bipartite",
+          "name": "Minimal Bipartite Graph",
+          "description": "Connect User and Transaction directly when they appear in the same row.",
+          "node_types": [
+            {
+              "name": "User",
+              "source_column": "user_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`user_id` is ID-like."
+            },
+            {
+              "name": "Transaction",
+              "source_column": "transaction_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`transaction_id` is ID-like."
+            }
+          ],
+          "edge_types": [
+            {
+              "source": "User",
+              "target": "Transaction",
+              "relation": "INTERACTS_WITH",
+              "source_columns": [
+                "user_id",
+                "transaction_id"
+              ],
+              "directed": false,
+              "reasoning": "Both entities co-occur in one record."
+            }
+          ],
+          "suggested_tasks": [
+            "Fraud Detection",
+            "Link Prediction",
+            "Temporal Graph Analysis"
+          ],
+          "quality_score": 74.82,
+          "warnings": [
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`amount` has very high cardinality and may need encoding or exclusion.",
+            "`timestamp` has very high cardinality and may need encoding or exclusion."
+          ],
+          "strengths": [
+            "Simple and interpretable.",
+            "Fast to preview and export.",
+            "Detected 4 entity-like columns that can form relationships.",
+            "Detected 2 candidate feature columns for modeling.",
+            "Label column is available, enabling supervised baseline evaluation.",
+            "Selected schema defines 1 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [
+            "Drops event-centered detail from additional entity columns."
+          ],
+          "recommended_models": [
+            {
+              "name": "Node2Vec",
+              "reason": "Simple embedding baseline for direct relationships."
+            }
+          ]
+        },
+        "preview": {
+          "schema_id": "rule_minimal_bipartite",
+          "stats": {
+            "num_nodes": 16,
+            "num_edges": 10,
+            "num_node_types": 2,
+            "num_edge_types": 1,
+            "avg_degree": 1.25,
+            "density": 0.041667,
+            "num_connected_components": 6,
+            "top_degree_nodes": [
+              {
+                "id": "User:U001",
+                "type": "User",
+                "degree": 3
+              },
+              {
+                "id": "User:U002",
+                "type": "User",
+                "degree": 2
+              },
+              {
+                "id": "User:U003",
+                "type": "User",
+                "degree": 2
+              },
+              {
+                "id": "Transaction:T001",
+                "type": "Transaction",
+                "degree": 1
+              },
+              {
+                "id": "Transaction:T002",
+                "type": "Transaction",
+                "degree": 1
+              },
+              {
+                "id": "Transaction:T003",
+                "type": "Transaction",
+                "degree": 1
+              },
+              {
+                "id": "Transaction:T004",
+                "type": "Transaction",
+                "degree": 1
+              },
+              {
+                "id": "User:U004",
+                "type": "User",
+                "degree": 1
+              },
+              {
+                "id": "Transaction:T005",
+                "type": "Transaction",
+                "degree": 1
+              },
+              {
+                "id": "Transaction:T006",
+                "type": "Transaction",
+                "degree": 1
+              }
+            ]
+          },
+          "nodes": [
+            {
+              "id": "User:U001",
+              "type": "User",
+              "label": "U001",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T001",
+              "type": "Transaction",
+              "label": "T001",
+              "features": {}
+            },
+            {
+              "id": "User:U002",
+              "type": "User",
+              "label": "U002",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T002",
+              "type": "Transaction",
+              "label": "T002",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T003",
+              "type": "Transaction",
+              "label": "T003",
+              "features": {}
+            },
+            {
+              "id": "User:U003",
+              "type": "User",
+              "label": "U003",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T004",
+              "type": "Transaction",
+              "label": "T004",
+              "features": {}
+            },
+            {
+              "id": "User:U004",
+              "type": "User",
+              "label": "U004",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T005",
+              "type": "Transaction",
+              "label": "T005",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T006",
+              "type": "Transaction",
+              "label": "T006",
+              "features": {}
+            },
+            {
+              "id": "User:U005",
+              "type": "User",
+              "label": "U005",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T007",
+              "type": "Transaction",
+              "label": "T007",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T008",
+              "type": "Transaction",
+              "label": "T008",
+              "features": {}
+            },
+            {
+              "id": "User:U006",
+              "type": "User",
+              "label": "U006",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T009",
+              "type": "Transaction",
+              "label": "T009",
+              "features": {}
+            },
+            {
+              "id": "Transaction:T010",
+              "type": "Transaction",
+              "label": "T010",
+              "features": {}
+            }
+          ],
+          "edges": [
+            {
+              "source": "User:U001",
+              "target": "Transaction:T001",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Transaction:T003",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Transaction:T008",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U002",
+              "target": "Transaction:T002",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U002",
+              "target": "Transaction:T006",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U003",
+              "target": "Transaction:T004",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U003",
+              "target": "Transaction:T010",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U004",
+              "target": "Transaction:T005",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U005",
+              "target": "Transaction:T007",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U006",
+              "target": "Transaction:T009",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            }
+          ]
+        },
+        "quality": {
+          "final_score": 77.82,
+          "suitability": "recommended",
+          "component_scores": {
+            "entity_confidence": 0.8875000000000001,
+            "relationship_confidence": 0.5700000000000001,
+            "feature_richness": 0.6614285714285714,
+            "task_suitability": 1.0,
+            "connectivity_estimate": 0.7,
+            "interpretability": 0.9
+          },
+          "strengths": [
+            "Detected 4 entity-like columns that can form relationships.",
+            "Detected 2 candidate feature columns for modeling.",
+            "Label column is available, enabling supervised baseline evaluation.",
+            "Selected schema defines 1 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [],
+          "warnings": [
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`amount` has very high cardinality and may need encoding or exclusion.",
+            "`timestamp` has very high cardinality and may need encoding or exclusion."
+          ],
+          "leakage_warnings": [],
+          "health_checks": [
+            {
+              "name": "entity_columns",
+              "status": "pass",
+              "message": "Found 4 entity-like ID columns for graph construction."
+            },
+            {
+              "name": "feature_columns",
+              "status": "pass",
+              "message": "Found 2 candidate feature columns."
+            },
+            {
+              "name": "missing_values",
+              "status": "pass",
+              "message": "Dataset missing rate is 0.0%."
+            },
+            {
+              "name": "temporal_ordering",
+              "status": "warning",
+              "message": "Timestamped data should use time-aware splits to avoid future leakage."
+            },
+            {
+              "name": "label_balance:is_fraud",
+              "status": "pass",
+              "message": "`is_fraud` label distribution looks usable."
+            },
+            {
+              "name": "high_cardinality:amount",
+              "status": "warning",
+              "message": "`amount` has very high cardinality and may need encoding or exclusion."
+            },
+            {
+              "name": "high_cardinality:timestamp",
+              "status": "warning",
+              "message": "`timestamp` has very high cardinality and may need encoding or exclusion."
+            }
+          ],
+          "explanation": "Graph suitability is `recommended` with a score of 77.8/100. It found 4 entity-like column(s). The selected schema is `Minimal Bipartite Graph`. Review warnings before using this graph for ML."
+        }
+      }
+    ]
+  },
+  {
+    "id": "user_ratings",
+    "name": "Product ratings",
+    "profile": {
+      "filename": "user_ratings.csv",
+      "row_count": 5,
+      "column_count": 5,
+      "total_missing_rate": 0.0,
+      "memory_usage_mb": 0.0010318756103515625,
+      "columns": [
+        {
+          "name": "user_id",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 4,
+          "cardinality_ratio": 0.8,
+          "sample_values": [
+            "U001",
+            "U001",
+            "U002",
+            "U003",
+            "U004"
+          ],
+          "value_counts": {
+            "U001": 2,
+            "U002": 1,
+            "U003": 1,
+            "U004": 1
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "id"
+        },
+        {
+          "name": "product_id",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 3,
+          "cardinality_ratio": 0.6,
+          "sample_values": [
+            "P001",
+            "P002",
+            "P001",
+            "P003",
+            "P002"
+          ],
+          "value_counts": {
+            "P001": 2,
+            "P002": 2,
+            "P003": 1
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "id"
+        },
+        {
+          "name": "rating",
+          "dtype": "int64",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 4,
+          "cardinality_ratio": 0.8,
+          "sample_values": [
+            5,
+            4,
+            3,
+            5,
+            2
+          ],
+          "value_counts": {
+            "5": 2,
+            "4": 1,
+            "3": 1,
+            "2": 1
+          },
+          "min_val": 2,
+          "max_val": 5,
+          "mean_val": 3.8,
+          "inferred_role": "numerical"
+        },
+        {
+          "name": "review_count",
+          "dtype": "int64",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 4,
+          "cardinality_ratio": 0.8,
+          "sample_values": [
+            2,
+            1,
+            4,
+            1,
+            5
+          ],
+          "value_counts": {
+            "1": 2,
+            "2": 1,
+            "4": 1,
+            "5": 1
+          },
+          "min_val": 1,
+          "max_val": 5,
+          "mean_val": 2.6,
+          "inferred_role": "numerical"
+        },
+        {
+          "name": "timestamp",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 5,
+          "cardinality_ratio": 1.0,
+          "sample_values": [
+            "2026-01-01T10:00:00",
+            "2026-01-02T10:00:00",
+            "2026-01-02T11:00:00",
+            "2026-01-03T10:00:00",
+            "2026-01-04T10:00:00"
+          ],
+          "value_counts": {
+            "2026-01-01T10:00:00": 1,
+            "2026-01-02T10:00:00": 1,
+            "2026-01-02T11:00:00": 1,
+            "2026-01-03T10:00:00": 1,
+            "2026-01-04T10:00:00": 1
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "timestamp"
+        }
+      ],
+      "id_columns": [
+        "user_id",
+        "product_id"
+      ],
+      "label_columns": [],
+      "has_timestamps": true
+    },
+    "variants": [
+      {
+        "schema": {
+          "id": "rule_minimal_bipartite",
+          "name": "Minimal Bipartite Graph",
+          "description": "Connect User and Product directly when they appear in the same row.",
+          "node_types": [
+            {
+              "name": "User",
+              "source_column": "user_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`user_id` is ID-like."
+            },
+            {
+              "name": "Product",
+              "source_column": "product_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`product_id` is ID-like."
+            }
+          ],
+          "edge_types": [
+            {
+              "source": "User",
+              "target": "Product",
+              "relation": "INTERACTS_WITH",
+              "source_columns": [
+                "user_id",
+                "product_id"
+              ],
+              "directed": false,
+              "reasoning": "Both entities co-occur in one record."
+            }
+          ],
+          "suggested_tasks": [
+            "Recommendation",
+            "Link Prediction",
+            "Temporal Graph Analysis",
+            "Community Detection",
+            "Anomaly Detection"
+          ],
+          "quality_score": 69.98,
+          "warnings": [
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`timestamp` has very high cardinality and may need encoding or exclusion."
+          ],
+          "strengths": [
+            "Simple and interpretable.",
+            "Fast to preview and export.",
+            "Detected 2 entity-like columns that can form relationships.",
+            "Detected 3 candidate feature columns for modeling.",
+            "Selected schema defines 1 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [
+            "Drops event-centered detail from additional entity columns."
+          ],
+          "recommended_models": [
+            {
+              "name": "Node2Vec",
+              "reason": "Simple embedding baseline for direct relationships."
+            }
+          ]
+        },
+        "preview": {
+          "schema_id": "rule_minimal_bipartite",
+          "stats": {
+            "num_nodes": 7,
+            "num_edges": 5,
+            "num_node_types": 2,
+            "num_edge_types": 1,
+            "avg_degree": 1.4286,
+            "density": 0.119048,
+            "num_connected_components": 2,
+            "top_degree_nodes": [
+              {
+                "id": "User:U001",
+                "type": "User",
+                "degree": 2
+              },
+              {
+                "id": "Product:P001",
+                "type": "Product",
+                "degree": 2
+              },
+              {
+                "id": "Product:P002",
+                "type": "Product",
+                "degree": 2
+              },
+              {
+                "id": "User:U002",
+                "type": "User",
+                "degree": 1
+              },
+              {
+                "id": "User:U003",
+                "type": "User",
+                "degree": 1
+              },
+              {
+                "id": "Product:P003",
+                "type": "Product",
+                "degree": 1
+              },
+              {
+                "id": "User:U004",
+                "type": "User",
+                "degree": 1
+              }
+            ]
+          },
+          "nodes": [
+            {
+              "id": "User:U001",
+              "type": "User",
+              "label": "U001",
+              "features": {}
+            },
+            {
+              "id": "Product:P001",
+              "type": "Product",
+              "label": "P001",
+              "features": {}
+            },
+            {
+              "id": "Product:P002",
+              "type": "Product",
+              "label": "P002",
+              "features": {}
+            },
+            {
+              "id": "User:U002",
+              "type": "User",
+              "label": "U002",
+              "features": {}
+            },
+            {
+              "id": "User:U003",
+              "type": "User",
+              "label": "U003",
+              "features": {}
+            },
+            {
+              "id": "Product:P003",
+              "type": "Product",
+              "label": "P003",
+              "features": {}
+            },
+            {
+              "id": "User:U004",
+              "type": "User",
+              "label": "U004",
+              "features": {}
+            }
+          ],
+          "edges": [
+            {
+              "source": "User:U001",
+              "target": "Product:P001",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U001",
+              "target": "Product:P002",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U002",
+              "target": "Product:P001",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U003",
+              "target": "Product:P003",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "User:U004",
+              "target": "Product:P002",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            }
+          ]
+        },
+        "quality": {
+          "final_score": 69.98,
+          "suitability": "promising_but_review",
+          "component_scores": {
+            "entity_confidence": 0.675,
+            "relationship_confidence": 0.5700000000000001,
+            "feature_richness": 0.86,
+            "task_suitability": 0.6499999999999999,
+            "connectivity_estimate": 0.575,
+            "interpretability": 0.9
+          },
+          "strengths": [
+            "Detected 2 entity-like columns that can form relationships.",
+            "Detected 3 candidate feature columns for modeling.",
+            "Selected schema defines 1 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [],
+          "warnings": [
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`timestamp` has very high cardinality and may need encoding or exclusion."
+          ],
+          "leakage_warnings": [],
+          "health_checks": [
+            {
+              "name": "entity_columns",
+              "status": "pass",
+              "message": "Found 2 entity-like ID columns for graph construction."
+            },
+            {
+              "name": "feature_columns",
+              "status": "pass",
+              "message": "Found 3 candidate feature columns."
+            },
+            {
+              "name": "missing_values",
+              "status": "pass",
+              "message": "Dataset missing rate is 0.0%."
+            },
+            {
+              "name": "temporal_ordering",
+              "status": "warning",
+              "message": "Timestamped data should use time-aware splits to avoid future leakage."
+            },
+            {
+              "name": "high_cardinality:timestamp",
+              "status": "warning",
+              "message": "`timestamp` has very high cardinality and may need encoding or exclusion."
+            }
+          ],
+          "explanation": "Graph suitability is `promising_but_review` with a score of 70.0/100. It found 2 entity-like column(s). The selected schema is `Minimal Bipartite Graph`. Review warnings before using this graph for ML."
+        }
+      }
+    ]
+  },
+  {
+    "id": "student_courses",
+    "name": "Learning analytics",
+    "profile": {
+      "filename": "student_courses.csv",
+      "row_count": 5,
+      "column_count": 6,
+      "total_missing_rate": 0.0,
+      "memory_usage_mb": 0.0012845993041992188,
+      "columns": [
+        {
+          "name": "student_id",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 4,
+          "cardinality_ratio": 0.8,
+          "sample_values": [
+            "S001",
+            "S001",
+            "S002",
+            "S003",
+            "S004"
+          ],
+          "value_counts": {
+            "S001": 2,
+            "S002": 1,
+            "S003": 1,
+            "S004": 1
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "id"
+        },
+        {
+          "name": "course_id",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 2,
+          "cardinality_ratio": 0.4,
+          "sample_values": [
+            "C001",
+            "C001",
+            "C001",
+            "C002",
+            "C002"
+          ],
+          "value_counts": {
+            "C001": 3,
+            "C002": 2
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "id"
+        },
+        {
+          "name": "assignment_id",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 3,
+          "cardinality_ratio": 0.6,
+          "sample_values": [
+            "A001",
+            "A002",
+            "A001",
+            "A003",
+            "A003"
+          ],
+          "value_counts": {
+            "A001": 2,
+            "A003": 2,
+            "A002": 1
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "id"
+        },
+        {
+          "name": "score",
+          "dtype": "int64",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 5,
+          "cardinality_ratio": 1.0,
+          "sample_values": [
+            88,
+            75,
+            45,
+            91,
+            66
+          ],
+          "value_counts": {
+            "88": 1,
+            "75": 1,
+            "45": 1,
+            "91": 1,
+            "66": 1
+          },
+          "min_val": 45,
+          "max_val": 91,
+          "mean_val": 73.0,
+          "inferred_role": "numerical"
+        },
+        {
+          "name": "attempt_time",
+          "dtype": "object",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 5,
+          "cardinality_ratio": 1.0,
+          "sample_values": [
+            "2026-01-01T08:00:00",
+            "2026-01-03T08:00:00",
+            "2026-01-01T09:00:00",
+            "2026-01-02T08:30:00",
+            "2026-01-02T09:30:00"
+          ],
+          "value_counts": {
+            "2026-01-01T08:00:00": 1,
+            "2026-01-03T08:00:00": 1,
+            "2026-01-01T09:00:00": 1,
+            "2026-01-02T08:30:00": 1,
+            "2026-01-02T09:30:00": 1
+          },
+          "min_val": null,
+          "max_val": null,
+          "mean_val": null,
+          "inferred_role": "timestamp"
+        },
+        {
+          "name": "passed",
+          "dtype": "int64",
+          "null_count": 0,
+          "null_rate": 0.0,
+          "unique_count": 2,
+          "cardinality_ratio": 0.4,
+          "sample_values": [
+            1,
+            1,
+            0,
+            1,
+            1
+          ],
+          "value_counts": {
+            "1": 4,
+            "0": 1
+          },
+          "min_val": 0,
+          "max_val": 1,
+          "mean_val": 0.8,
+          "inferred_role": "label"
+        }
+      ],
+      "id_columns": [
+        "student_id",
+        "course_id",
+        "assignment_id"
+      ],
+      "label_columns": [
+        "passed"
+      ],
+      "has_timestamps": true
+    },
+    "variants": [
+      {
+        "schema": {
+          "id": "rule_transaction_centered",
+          "name": "Transaction-Centered Graph",
+          "description": "Use Assignment as an event node and attach row-level features to it.",
+          "node_types": [
+            {
+              "name": "Assignment",
+              "source_column": "assignment_id",
+              "feature_columns": [
+                "score",
+                "attempt_time"
+              ],
+              "count_estimate": null,
+              "reasoning": "`assignment_id` is highly unique and works as an event node."
+            },
+            {
+              "name": "Student",
+              "source_column": "student_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`student_id` is ID-like and repeatedly links events."
+            },
+            {
+              "name": "Course",
+              "source_column": "course_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`course_id` is ID-like and repeatedly links events."
+            }
+          ],
+          "edge_types": [
+            {
+              "source": "Student",
+              "target": "Assignment",
+              "relation": "ATTEMPTED",
+              "source_columns": [
+                "student_id",
+                "assignment_id"
+              ],
+              "directed": true,
+              "reasoning": "Connect Student to Assignment through each row event."
+            },
+            {
+              "source": "Course",
+              "target": "Assignment",
+              "relation": "RELATED_TO",
+              "source_columns": [
+                "course_id",
+                "assignment_id"
+              ],
+              "directed": true,
+              "reasoning": "Connect Course to Assignment through each row event."
+            }
+          ],
+          "suggested_tasks": [
+            "Node or Edge Classification",
+            "Link Prediction",
+            "Temporal Graph Analysis"
+          ],
+          "quality_score": 77.45,
+          "warnings": [
+            "Use time-aware splits when training with timestamped events.",
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`score` has very high cardinality and may need encoding or exclusion.",
+            "`attempt_time` has very high cardinality and may need encoding or exclusion."
+          ],
+          "strengths": [
+            "Preserves event features.",
+            "Strong fit for fraud or interaction datasets.",
+            "Detected 3 entity-like columns that can form relationships.",
+            "Detected 2 candidate feature columns for modeling.",
+            "Label column is available, enabling supervised baseline evaluation.",
+            "Selected schema defines 2 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [
+            "Creates more nodes than a direct graph."
+          ],
+          "recommended_models": [
+            {
+              "name": "GraphSAGE",
+              "reason": "Useful supervised baseline when labels exist."
+            }
+          ]
+        },
+        "preview": {
+          "schema_id": "rule_transaction_centered",
+          "stats": {
+            "num_nodes": 9,
+            "num_edges": 10,
+            "num_node_types": 3,
+            "num_edge_types": 2,
+            "avg_degree": 2.2222,
+            "density": 0.138889,
+            "num_connected_components": 2,
+            "top_degree_nodes": [
+              {
+                "id": "Assignment:A001",
+                "type": "Assignment",
+                "degree": 4
+              },
+              {
+                "id": "Assignment:A003",
+                "type": "Assignment",
+                "degree": 4
+              },
+              {
+                "id": "Course:C001",
+                "type": "Course",
+                "degree": 3
+              },
+              {
+                "id": "Student:S001",
+                "type": "Student",
+                "degree": 2
+              },
+              {
+                "id": "Assignment:A002",
+                "type": "Assignment",
+                "degree": 2
+              },
+              {
+                "id": "Course:C002",
+                "type": "Course",
+                "degree": 2
+              },
+              {
+                "id": "Student:S002",
+                "type": "Student",
+                "degree": 1
+              },
+              {
+                "id": "Student:S003",
+                "type": "Student",
+                "degree": 1
+              },
+              {
+                "id": "Student:S004",
+                "type": "Student",
+                "degree": 1
+              }
+            ]
+          },
+          "nodes": [
+            {
+              "id": "Assignment:A001",
+              "type": "Assignment",
+              "label": "A001",
+              "features": {
+                "score": 45,
+                "attempt_time": "2026-01-01T09:00:00"
+              }
+            },
+            {
+              "id": "Student:S001",
+              "type": "Student",
+              "label": "S001",
+              "features": {}
+            },
+            {
+              "id": "Course:C001",
+              "type": "Course",
+              "label": "C001",
+              "features": {}
+            },
+            {
+              "id": "Assignment:A002",
+              "type": "Assignment",
+              "label": "A002",
+              "features": {
+                "score": 75,
+                "attempt_time": "2026-01-03T08:00:00"
+              }
+            },
+            {
+              "id": "Student:S002",
+              "type": "Student",
+              "label": "S002",
+              "features": {}
+            },
+            {
+              "id": "Assignment:A003",
+              "type": "Assignment",
+              "label": "A003",
+              "features": {
+                "score": 66,
+                "attempt_time": "2026-01-02T09:30:00"
+              }
+            },
+            {
+              "id": "Student:S003",
+              "type": "Student",
+              "label": "S003",
+              "features": {}
+            },
+            {
+              "id": "Course:C002",
+              "type": "Course",
+              "label": "C002",
+              "features": {}
+            },
+            {
+              "id": "Student:S004",
+              "type": "Student",
+              "label": "S004",
+              "features": {}
+            }
+          ],
+          "edges": [
+            {
+              "source": "Student:S001",
+              "target": "Assignment:A001",
+              "relation": "ATTEMPTED",
+              "features": {}
+            },
+            {
+              "source": "Student:S001",
+              "target": "Assignment:A002",
+              "relation": "ATTEMPTED",
+              "features": {}
+            },
+            {
+              "source": "Course:C001",
+              "target": "Assignment:A001",
+              "relation": "RELATED_TO",
+              "features": {}
+            },
+            {
+              "source": "Course:C001",
+              "target": "Assignment:A001",
+              "relation": "RELATED_TO",
+              "features": {}
+            },
+            {
+              "source": "Course:C001",
+              "target": "Assignment:A002",
+              "relation": "RELATED_TO",
+              "features": {}
+            },
+            {
+              "source": "Student:S002",
+              "target": "Assignment:A001",
+              "relation": "ATTEMPTED",
+              "features": {}
+            },
+            {
+              "source": "Student:S003",
+              "target": "Assignment:A003",
+              "relation": "ATTEMPTED",
+              "features": {}
+            },
+            {
+              "source": "Course:C002",
+              "target": "Assignment:A003",
+              "relation": "RELATED_TO",
+              "features": {}
+            },
+            {
+              "source": "Course:C002",
+              "target": "Assignment:A003",
+              "relation": "RELATED_TO",
+              "features": {}
+            },
+            {
+              "source": "Student:S004",
+              "target": "Assignment:A003",
+              "relation": "ATTEMPTED",
+              "features": {}
+            }
+          ]
+        },
+        "quality": {
+          "final_score": 77.45,
+          "suitability": "recommended",
+          "component_scores": {
+            "entity_confidence": 0.7875000000000001,
+            "relationship_confidence": 0.69,
+            "feature_richness": 0.6733333333333333,
+            "task_suitability": 1.0,
+            "connectivity_estimate": 0.6499999999999999,
+            "interpretability": 0.9
+          },
+          "strengths": [
+            "Detected 3 entity-like columns that can form relationships.",
+            "Detected 2 candidate feature columns for modeling.",
+            "Label column is available, enabling supervised baseline evaluation.",
+            "Selected schema defines 2 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [],
+          "warnings": [
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`score` has very high cardinality and may need encoding or exclusion.",
+            "`attempt_time` has very high cardinality and may need encoding or exclusion."
+          ],
+          "leakage_warnings": [],
+          "health_checks": [
+            {
+              "name": "entity_columns",
+              "status": "pass",
+              "message": "Found 3 entity-like ID columns for graph construction."
+            },
+            {
+              "name": "feature_columns",
+              "status": "pass",
+              "message": "Found 2 candidate feature columns."
+            },
+            {
+              "name": "missing_values",
+              "status": "pass",
+              "message": "Dataset missing rate is 0.0%."
+            },
+            {
+              "name": "temporal_ordering",
+              "status": "warning",
+              "message": "Timestamped data should use time-aware splits to avoid future leakage."
+            },
+            {
+              "name": "label_balance:passed",
+              "status": "pass",
+              "message": "`passed` label distribution looks usable."
+            },
+            {
+              "name": "high_cardinality:score",
+              "status": "warning",
+              "message": "`score` has very high cardinality and may need encoding or exclusion."
+            },
+            {
+              "name": "high_cardinality:attempt_time",
+              "status": "warning",
+              "message": "`attempt_time` has very high cardinality and may need encoding or exclusion."
+            }
+          ],
+          "explanation": "Graph suitability is `recommended` with a score of 77.5/100. It found 3 entity-like column(s). The selected schema is `Transaction-Centered Graph`. Review warnings before using this graph for ML."
+        }
+      },
+      {
+        "schema": {
+          "id": "rule_minimal_bipartite",
+          "name": "Minimal Bipartite Graph",
+          "description": "Connect Student and Course directly when they appear in the same row.",
+          "node_types": [
+            {
+              "name": "Student",
+              "source_column": "student_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`student_id` is ID-like."
+            },
+            {
+              "name": "Course",
+              "source_column": "course_id",
+              "feature_columns": [],
+              "count_estimate": null,
+              "reasoning": "`course_id` is ID-like."
+            }
+          ],
+          "edge_types": [
+            {
+              "source": "Student",
+              "target": "Course",
+              "relation": "INTERACTS_WITH",
+              "source_columns": [
+                "student_id",
+                "course_id"
+              ],
+              "directed": false,
+              "reasoning": "Both entities co-occur in one record."
+            }
+          ],
+          "suggested_tasks": [
+            "Node or Edge Classification",
+            "Link Prediction",
+            "Temporal Graph Analysis"
+          ],
+          "quality_score": 72.05,
+          "warnings": [
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`score` has very high cardinality and may need encoding or exclusion.",
+            "`attempt_time` has very high cardinality and may need encoding or exclusion."
+          ],
+          "strengths": [
+            "Simple and interpretable.",
+            "Fast to preview and export.",
+            "Detected 3 entity-like columns that can form relationships.",
+            "Detected 2 candidate feature columns for modeling.",
+            "Label column is available, enabling supervised baseline evaluation.",
+            "Selected schema defines 1 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [
+            "Drops event-centered detail from additional entity columns."
+          ],
+          "recommended_models": [
+            {
+              "name": "Node2Vec",
+              "reason": "Simple embedding baseline for direct relationships."
+            }
+          ]
+        },
+        "preview": {
+          "schema_id": "rule_minimal_bipartite",
+          "stats": {
+            "num_nodes": 6,
+            "num_edges": 5,
+            "num_node_types": 2,
+            "num_edge_types": 1,
+            "avg_degree": 1.6667,
+            "density": 0.166667,
+            "num_connected_components": 2,
+            "top_degree_nodes": [
+              {
+                "id": "Course:C001",
+                "type": "Course",
+                "degree": 3
+              },
+              {
+                "id": "Student:S001",
+                "type": "Student",
+                "degree": 2
+              },
+              {
+                "id": "Course:C002",
+                "type": "Course",
+                "degree": 2
+              },
+              {
+                "id": "Student:S002",
+                "type": "Student",
+                "degree": 1
+              },
+              {
+                "id": "Student:S003",
+                "type": "Student",
+                "degree": 1
+              },
+              {
+                "id": "Student:S004",
+                "type": "Student",
+                "degree": 1
+              }
+            ]
+          },
+          "nodes": [
+            {
+              "id": "Student:S001",
+              "type": "Student",
+              "label": "S001",
+              "features": {}
+            },
+            {
+              "id": "Course:C001",
+              "type": "Course",
+              "label": "C001",
+              "features": {}
+            },
+            {
+              "id": "Student:S002",
+              "type": "Student",
+              "label": "S002",
+              "features": {}
+            },
+            {
+              "id": "Student:S003",
+              "type": "Student",
+              "label": "S003",
+              "features": {}
+            },
+            {
+              "id": "Course:C002",
+              "type": "Course",
+              "label": "C002",
+              "features": {}
+            },
+            {
+              "id": "Student:S004",
+              "type": "Student",
+              "label": "S004",
+              "features": {}
+            }
+          ],
+          "edges": [
+            {
+              "source": "Student:S001",
+              "target": "Course:C001",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Student:S001",
+              "target": "Course:C001",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Student:S002",
+              "target": "Course:C001",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Student:S003",
+              "target": "Course:C002",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            },
+            {
+              "source": "Student:S004",
+              "target": "Course:C002",
+              "relation": "INTERACTS_WITH",
+              "features": {}
+            }
+          ]
+        },
+        "quality": {
+          "final_score": 75.05,
+          "suitability": "recommended",
+          "component_scores": {
+            "entity_confidence": 0.7875000000000001,
+            "relationship_confidence": 0.5700000000000001,
+            "feature_richness": 0.6733333333333333,
+            "task_suitability": 1.0,
+            "connectivity_estimate": 0.6499999999999999,
+            "interpretability": 0.9
+          },
+          "strengths": [
+            "Detected 3 entity-like columns that can form relationships.",
+            "Detected 2 candidate feature columns for modeling.",
+            "Label column is available, enabling supervised baseline evaluation.",
+            "Selected schema defines 1 relationship type(s).",
+            "Schema complexity is still easy to explain."
+          ],
+          "weaknesses": [],
+          "warnings": [
+            "Use time-aware splits for timestamped data to reduce leakage risk.",
+            "Timestamped data should use time-aware splits to avoid future leakage.",
+            "`score` has very high cardinality and may need encoding or exclusion.",
+            "`attempt_time` has very high cardinality and may need encoding or exclusion."
+          ],
+          "leakage_warnings": [],
+          "health_checks": [
+            {
+              "name": "entity_columns",
+              "status": "pass",
+              "message": "Found 3 entity-like ID columns for graph construction."
+            },
+            {
+              "name": "feature_columns",
+              "status": "pass",
+              "message": "Found 2 candidate feature columns."
+            },
+            {
+              "name": "missing_values",
+              "status": "pass",
+              "message": "Dataset missing rate is 0.0%."
+            },
+            {
+              "name": "temporal_ordering",
+              "status": "warning",
+              "message": "Timestamped data should use time-aware splits to avoid future leakage."
+            },
+            {
+              "name": "label_balance:passed",
+              "status": "pass",
+              "message": "`passed` label distribution looks usable."
+            },
+            {
+              "name": "high_cardinality:score",
+              "status": "warning",
+              "message": "`score` has very high cardinality and may need encoding or exclusion."
+            },
+            {
+              "name": "high_cardinality:attempt_time",
+              "status": "warning",
+              "message": "`attempt_time` has very high cardinality and may need encoding or exclusion."
+            }
+          ],
+          "explanation": "Graph suitability is `recommended` with a score of 75.1/100. It found 3 entity-like column(s). The selected schema is `Minimal Bipartite Graph`. Review warnings before using this graph for ML."
+        }
+      }
+    ]
+  }
+]

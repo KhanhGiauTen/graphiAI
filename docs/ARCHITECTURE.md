@@ -6,6 +6,14 @@ Tài liệu này là bản đồ nhanh cho mọi phiên làm việc. Trước kh
 
 Graphify AI là nền tảng hỗ trợ chuyển dữ liệu bảng CSV thành mô hình graph có thể giải thích, đánh giá chất lượng, trực quan hóa và export code khởi đầu cho graph analytics/GNN. Phạm vi hiện tại tập trung vào demo local và nghiên cứu: single-table event datasets có nhiều cột entity ID lặp lại như giao dịch gian lận, rating, đơn hàng, sinh viên-khóa học, access log.
 
+## Public demo cho HR
+
+- `frontend/src/app/demo/page.tsx` tái sử dụng GraphExplorer và QualityPanel với snapshot fixture tổng hợp.
+- Chạy `.venv/Scripts/python.exe scripts/export_public_demo.py` để tạo `frontend/src/data/public-demo.json` bằng chính DataProfiler, RuleBasedSchemaRecommender, GraphBuilder và GraphQualityScorer.
+- Generator chỉ đọc ba fixture được whitelist trong `backend/tests/fixtures`; không đọc uploads, DB hoặc env.
+- Vercel deploy riêng thư mục `frontend`, `NEXT_PUBLIC_PUBLIC_DEMO=true` chuyển các route backend-dependent về `/demo`.
+- Hosted demo không hỗ trợ upload, AI/LLM, tài khoản hay persistence. Full app local không đổi khi biến public demo không được đặt.
+
 ## Stack hiện tại
 
 - Frontend: Next.js 16 App Router, React 18, TypeScript, TailwindCSS, `lucide-react`.
@@ -14,7 +22,7 @@ Graphify AI là nền tảng hỗ trợ chuyển dữ liệu bảng CSV thành m
 - AI: rule-based schema recommender, OpenAI-compatible LLM mode tùy chọn, heuristic fallback mặc định.
 - Infra: Docker Compose, GitHub Actions CI, script smoke test.
 - Deployment target: Vercel frontend, Render backend Docker service, Render Postgres, Render persistent disk.
-- Trạng thái vận hành: chưa có hosted deployment; đường đánh giá chính là local native hoặc Docker Compose.
+- Trạng thái vận hành: demo fixture công khai tại https://graphify-khanh-demo.vercel.app/demo; full backend vẫn local native hoặc Docker Compose.
 
 ## Cấu trúc repo
 

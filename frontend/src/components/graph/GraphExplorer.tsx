@@ -26,6 +26,7 @@ type EdgeVisibilityMode = "all" | "neighborhood"
 
 interface GraphExplorerProps {
   preview: GraphPreview
+  fitToData?: boolean
 }
 
 interface PositionedNode extends GraphNode {
@@ -35,7 +36,7 @@ interface PositionedNode extends GraphNode {
   color: string
 }
 
-export function GraphExplorer({ preview }: GraphExplorerProps) {
+export function GraphExplorer({ preview, fitToData = false }: GraphExplorerProps) {
   const nodeTypes = useMemo(() => sortUnique(preview.nodes.map((node) => node.type)), [preview.nodes])
   const relationTypes = useMemo(() => sortUnique(preview.edges.map((edge) => edge.relation)), [preview.edges])
   const [enabledTypes, setEnabledTypes] = useState<Record<string, boolean>>(() =>
@@ -109,6 +110,18 @@ export function GraphExplorer({ preview }: GraphExplorerProps) {
     [colorByType, densityMode, graphIndex.degreeByNode, visibleNodes],
   )
   const positionedById = useMemo(() => new Map(positionedNodes.map((node) => [node.id, node])), [positionedNodes])
+  const viewBox = useMemo(() => {
+    if (!fitToData || !positionedNodes.length) return `0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`
+    const xs = positionedNodes.map((node) => node.x)
+    const ys = positionedNodes.map((node) => node.y)
+    const minX = Math.min(...xs)
+    const maxX = Math.max(...xs)
+    const minY = Math.min(...ys)
+    const maxY = Math.max(...ys)
+    const width = Math.max(420, maxX - minX + 144)
+    const height = Math.max(300, maxY - minY + 144)
+    return `${(minX + maxX - width) / 2} ${(minY + maxY - height) / 2} ${width} ${height}`
+  }, [fitToData, positionedNodes])
   const renderedEdges = visibleEdges.slice(0, MAX_RENDERED_EDGES)
   const selectedNode = selectedNodeId ? graphIndex.nodeById.get(selectedNodeId) : undefined
   const hoveredNode = hoveredNodeId ? positionedById.get(hoveredNodeId) : undefined
@@ -201,13 +214,13 @@ export function GraphExplorer({ preview }: GraphExplorerProps) {
           <FilterGroup enabled={enabledRelations} items={relationTypes} onToggle={toggleRelation} title="Relations" />
         </aside>
 
-        <div className="min-h-[560px] overflow-hidden rounded-card border border-border-soft bg-white shadow-line">
+        <div className={`${fitToData ? "min-h-[400px]" : "min-h-[560px]"} overflow-hidden rounded-card border border-border-soft bg-white shadow-line`}>
           <svg
             aria-label="Interactive graph preview"
-            className="block h-full min-h-[560px] w-full"
+            className={`block h-full w-full ${fitToData ? "min-h-[400px]" : "min-h-[560px]"}`}
             preserveAspectRatio="xMidYMid meet"
-            role="img"
-            viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
+            role="group"
+            viewBox={viewBox}
           >
             <rect fill="#f8fbff" height={VIEWBOX_HEIGHT} width={VIEWBOX_WIDTH} />
             <g>
@@ -248,9 +261,18 @@ export function GraphExplorer({ preview }: GraphExplorerProps) {
                 const radius = nodeSizeMode === "uniform" ? 10.5 : Math.min(21, 7 + Math.sqrt(node.degree + 1) * 2.3)
                 return (
                   <g
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Select ${node.type} ${node.label}`}
+                    aria-pressed={isSelected}
                     className={`${animatedLayout ? "graph-node-enter" : ""} graph-node-hover cursor-pointer`}
                     key={node.id}
                     onClick={() => selectNode(node.id)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); selectNode(node.id) }
+                    }}
+                    onFocus={() => setHoveredNodeId(node.id)}
+                    onBlur={() => setHoveredNodeId("")}
                     onMouseEnter={() => setHoveredNodeId(node.id)}
                     onMouseLeave={() => setHoveredNodeId("")}
                     opacity={faded ? 0.24 : 1}

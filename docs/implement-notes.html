@@ -246,6 +246,14 @@
 
     <div class="layout">
       <section class="notes" aria-label="Danh sách note triển khai">
+        <article class="note-card" data-timestamp="2026-10-05T16:20:00+07:00">
+          <header class="note-header"><div class="card-meta"><span class="pill accent">2026-10-05 16:20:00 +07:00</span><span class="pill">Người note: KhanhGiauTen</span></div><h2 class="note-title">Vá dependency trước public release</h2></header>
+          <div class="note-body"><p>Audit phát hiện advisory mới trong Next, Axios, PostCSS, Sharp và Nano ID. Cập nhật Next 16.3.8, Axios 1.20.0, PostCSS 8.5.28, overrides Sharp 0.35.5 và Nano ID 3.3.19; npm audit fix không dùng --force.</p><p>Build/typecheck pass; audit --omit=dev trả 0 vulnerabilities. Tailwind development dependency còn advisory braces/glob chưa vá, không nâng Tailwind major chỉ để tắt cảnh báo. Backend regression pass 49/49 khi dùng temporary directory trong workspace.</p></div>
+        </article>
+        <article class="note-card" data-timestamp="2026-10-05T15:59:21+07:00">
+          <header class="note-header"><div class="card-meta"><span class="pill accent">2026-10-05 15:59:21 +07:00</span><span class="pill">Người note: KhanhGiauTen</span></div><h2 class="note-title">Demo công khai cho nhà tuyển dụng</h2></header>
+          <div class="note-body"><p>Thêm generator snapshot từ ba fixture tổng hợp qua profiler, recommender, graph builder và quality scorer thật. UI /demo tái dùng GraphExplorer/QualityPanel, đổi dataset/schema và export JSON. GraphExplorer thêm fitToData tùy chọn cho fixture nhỏ, node có focus và chọn bằng Enter/Space.</p><p>Cấu hình Vercel deploy frontend độc lập, chuyển route phụ thuộc backend về demo chỉ khi NEXT_PUBLIC_PUBLIC_DEMO=true. Biến này phải đặt ở build command để redirects và client bundle nhất quán. Không upload DB, env, file người dùng; không giả lập LLM hoặc tuyên bố full backend đã hosted. Cập nhật architecture, ignore và navigation theo demo mode.</p><p>URL: https://graphify-khanh-demo.vercel.app/demo. Build/typecheck pass; browser xác nhận đổi dataset và mobile không overflow. Chi tiết kiểm chứng tại docs/public-demo.md. Rủi ro: snapshot chỉ phản ánh fixture, không phải kết quả huấn luyện production.</p></div>
+        </article>
         <article class="note-card" data-timestamp="2026-07-24T16:43:55+07:00">
           <header class="note-header">
             <div class="card-meta">

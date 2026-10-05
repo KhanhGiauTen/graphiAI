@@ -16,7 +16,7 @@ Graphify AI giúp người dùng biến dữ liệu bảng như CSV giao dịch,
 | Storage local | SQLite metadata, local uploads/exports |
 | Deployment target | Vercel frontend + Render backend + Render Postgres + persistent disk |
 | CI/CD | GitHub Actions CI and production deploy workflow prepared |
-| Hosted demo | Not deployed yet; the supported evaluation path is local |
+| Hosted demo | [Interactive fixture demo](https://graphify-khanh-demo.vercel.app/demo); full backend remains local |
 
 ## Product Pitch
 
@@ -30,7 +30,7 @@ Most business and research datasets start as tables. Before using graph analytic
 
 Graphify AI acts as an AI Graph Engineer for this conversion step. It does not only draw a graph from CSV. It explains the schema choice, scores graph suitability, warns about risk, previews graph structure, and exports starter code.
 
-> **Availability:** This repository does not have a public Vercel/Render deployment yet. The application is ready to run locally, and the deployment configuration is included for a later hosted release.
+> **Availability:** [Open the public demo](https://graphify-khanh-demo.vercel.app/demo) to compare three synthetic datasets, explore real graph-builder outputs, inspect quality reports, and export JSON. Fresh CSV profiling, LLM integrations, accounts, and persistence require the full local application. See [public demo deployment](docs/public-demo.md).
 
 ## Demo Screenshots
 

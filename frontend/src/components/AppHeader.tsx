@@ -7,6 +7,8 @@ const navItems = [
 ]
 
 export function AppHeader() {
+  const publicDemo = process.env.NEXT_PUBLIC_PUBLIC_DEMO === "true"
+  const items = publicDemo ? [{ href: "/demo", label: "Demo", icon: UploadCloud }, { href: "/demo#graph", label: "Graph", icon: FolderKanban }, { href: "/demo#quality", label: "Quality", icon: Settings }] : navItems
   return (
     <header className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-5 text-ink">
       <a className="flex items-center gap-3" href="/">
@@ -21,7 +23,7 @@ export function AppHeader() {
         </span>
       </a>
       <nav className="flex flex-wrap items-center gap-1 rounded-card border border-border-soft bg-white/76 p-1 shadow-line">
-        {navItems.map((item) => {
+        {items.map((item) => {
           const Icon = item.icon
           return (
             <a className="btn-ghost px-3 py-2" href={item.href} key={item.href}>

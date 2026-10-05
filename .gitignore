@@ -23,6 +23,7 @@ backend/exports/*
 # Node / Next.js
 node_modules/
 .next/
+.vercel/
 out/
 *.tsbuildinfo
 npm-debug.log*
